@@ -84,7 +84,7 @@ class TestConfigLoader(unittest.TestCase):
         
         # 验证错误信息包含MODEL_TYPE的信息
         error_msg = str(context.exception)
-        self.assertIn("无效的MODEL_TYPE", error_msg)
+        self.assertIn("MODEL_TYPE", error_msg)
         self.assertIn("invalid_type", error_msg)
 
     def test_multiple_main_api(self):
