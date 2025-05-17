@@ -1,0 +1,18 @@
+models:
+  - OPENAI_API_BASE: "https://api.openai.com/v1"
+    OPENAI_API_KEY: "sk-abcd1234"
+    MODEL_NAME: "gpt-4"
+    MODEL_TYPE: "text"
+    MAIN_API: true  # 第一个MAIN_API
+  
+  - OPENAI_API_BASE: "https://api.company.com/v1"
+    OPENAI_API_KEY: "sk-wxyz5678"
+    MODEL_NAME: "company-model-v1"
+    MODEL_TYPE: "mllm"
+    MAIN_API: true  # 第二个MAIN_API，应被忽略
+    
+  - OPENAI_API_BASE: "https://api.another.com/v1"
+    OPENAI_API_KEY: "sk-efgh9012"
+    MODEL_NAME: "another-model-v2"
+    MODEL_TYPE: "vision"
+    MAIN_API: true  # 第三个MAIN_API，应被忽略 

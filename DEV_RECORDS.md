@@ -23,27 +23,27 @@
     - `[已完成 - 2025-05-18 00:18]` 创建 `LICENSE` 文件：内容为 Apache 2.0 许可证文本。
     - `[已完成 - 2025-05-18 00:18]` 根据 `STRUCTURE.md` 创建项目的基础目录结构，包括所有规划的空文件夹和 `__init__.py` 文件以构成 Python 包。
 
-#### **任务1.2：模型配置模块 (`xperteval/config/`)** `[待执行]`
+#### **任务1.2：模型配置模块 (`xperteval/config/`)** `[已完成 - 2025-05-18 00:22]`
 - **涉及文件**： `xperteval/config/config_loader.py`, `xperteval/config/__init__.py`
 - **`xperteval/config/config_loader.py` 功能点**：
-    - `[待执行]` 定义 `load_model_configs(config_path: str) -> dict` 函数 (或类)。
-        - `[待执行]` 支持从 YAML 文件 (`*.yaml` 或 `*.yml`) 加载配置。
-        - `[待执行]` 支持从 JSON 文件 (`*.json`) 加载配置。
-        - `[待执行]` 解析顶层的 `default_params` 全局默认参数字典。
-        - `[待执行]` 解析 `models` 列表，每个模型配置为一个字典。
-        - `[待执行]` 对每个模型配置，合并 `default_params` 和模型特定参数（模型特定参数优先）。
-        - `[待执行]` **配置项校验**：
-            - `[待执行]` 检查 `models` 列表是否存在且至少包含两个模型配置。
-            - `[待执行]` 处理 `MAIN_API` 字段：
+    - `[已完成 - 2025-05-18 00:22]` 定义 `load_model_configs(config_path: str) -> dict` 函数 (或类)。
+        - `[已完成 - 2025-05-18 00:22]` 支持从 YAML 文件 (`*.yaml` 或 `*.yml`) 加载配置。
+        - `[已完成 - 2025-05-18 00:22]` 支持从 JSON 文件 (`*.json`) 加载配置。
+        - `[已完成 - 2025-05-18 00:22]` 解析顶层的 `default_params` 全局默认参数字典。
+        - `[已完成 - 2025-05-18 00:22]` 解析 `models` 列表，每个模型配置为一个字典。
+        - `[已完成 - 2025-05-18 00:22]` 对每个模型配置，合并 `default_params` 和模型特定参数（模型特定参数优先）。
+        - `[已完成 - 2025-05-18 00:22]` **配置项校验**：
+            - `[已完成 - 2025-05-18 00:22]` 检查 `models` 列表是否存在且至少包含两个模型配置。
+            - `[已完成 - 2025-05-18 00:22]` 处理 `MAIN_API` 字段：
                 - 若多个模型设置 `MAIN_API: true`，则以第一个出现的为准，其余置为 `false`。
                 - 若无模型设置 `MAIN_API: true`，则默认列表中的第一个模型为 `MAIN_API: true`。
-            - `[待执行]` 校验每个模型配置是否包含必需字段：`OPENAI_API_BASE`, `OPENAI_API_KEY`, `MODEL_NAME`, `MODEL_TYPE`。
-            - `[待执行]` 校验 `MODEL_TYPE` 是否为预定义枚举值之一 (`text`, `vision`, `audio`, `mllm`)。
-            - `[待执行]` 校验可选参数 (如 `MAX_TOKENS`, `TEMPERATURE`) 的数据类型和合理范围 (如适用)。
-        - `[待执行]` 当配置加载失败或校验不通过时，抛出带有清晰中文错误提示的自定义异常 (如 `ValueError` 或自定义的 `ConfigError`)。
-    - `[待执行]` 添加详细的中文注释，说明每个函数、参数和主要逻辑块的功能。
+            - `[已完成 - 2025-05-18 00:22]` 校验每个模型配置是否包含必需字段：`OPENAI_API_BASE`, `OPENAI_API_KEY`, `MODEL_NAME`, `MODEL_TYPE`。
+            - `[已完成 - 2025-05-18 00:22]` 校验 `MODEL_TYPE` 是否为预定义枚举值之一 (`text`, `vision`, `audio`, `mllm`)。
+            - `[已完成 - 2025-05-18 00:22]` 校验可选参数 (如 `MAX_TOKENS`, `TEMPERATURE`) 的数据类型和合理范围 (如适用)。
+        - `[已完成 - 2025-05-18 00:22]` 当配置加载失败或校验不通过时，抛出带有清晰中文错误提示的自定义异常 (如 `ValueError` 或自定义的 `ConfigError`)。
+    - `[已完成 - 2025-05-18 00:22]` 添加详细的中文注释，说明每个函数、参数和主要逻辑块的功能。
 - **`xperteval/config/__init__.py` 功能点**：
-    - `[待执行]` 确保 `config_loader` 中的主要功能可以被外部调用，例如 `from xperteval.config import load_model_configs`。
+    - `[已完成 - 2025-05-18 00:22]` 确保 `config_loader` 中的主要功能可以被外部调用，例如 `from xperteval.config import load_model_configs`。
 
 #### **任务1.3：API 调用模块 (`xperteval/core/api_caller.py`)** `[待执行]`
 - **涉及文件**：`xperteval/core/api_caller.py`, `xperteval/core/__init__.py`

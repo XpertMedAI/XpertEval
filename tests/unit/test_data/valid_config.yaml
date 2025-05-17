@@ -1,0 +1,21 @@
+default_params:
+  MAX_TOKENS: 4096
+  TEMPERATURE: 0.7
+  TOP_P: 0.95
+  TOP_K: 0.95
+  FREQUENCY_PENALTY: 0.0
+  PRESENCE_PENALTY: 0.0
+  REQUEST_TIMEOUT: 120
+
+models:
+  - OPENAI_API_BASE: "https://api.openai.com/v1"
+    OPENAI_API_KEY: "sk-abcd1234"
+    MODEL_NAME: "gpt-4"
+    MODEL_TYPE: "text"
+    MAIN_API: true
+
+  - OPENAI_API_BASE: "https://api.company.com/v1"
+    OPENAI_API_KEY: "sk-wxyz5678"
+    MODEL_NAME: "company-model-v1"
+    MODEL_TYPE: "mllm"
+    TEMPERATURE: 0.8  # 覆盖默认参数 

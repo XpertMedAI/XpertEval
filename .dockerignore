@@ -1,3 +1,7 @@
+# Git相关
+.git/
+.gitignore
+
 # Python相关
 __pycache__/
 *.py[cod]
@@ -41,17 +45,21 @@ config.json
 results/
 data/custom/local_data/
 
-# 临时文件
+# 测试相关
 .pytest_cache/
 .coverage
 htmlcov/
 .tox/
 
-# 密钥和证书
-*.pem
-*.key
-*.crt
+# Docker相关
+Dockerfile
+.dockerignore
 
-# 数据库
-*.sqlite
-*.db 
+# 文档相关
+docs/
+README.md
+LICENSE
+REQUIREMENTS.md
+STRUCTURE.md
+DEV_PLAN.md
+DEV_RECORDS.md 

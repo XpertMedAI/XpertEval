@@ -1,0 +1,12 @@
+models:
+  - OPENAI_API_BASE: "https://api.openai.com/v1"
+    OPENAI_API_KEY: "sk-abcd1234"
+    MODEL_NAME: "gpt-4"
+    MODEL_TYPE: "text"
+    # 未设置MAIN_API，应默认为第一个
+  
+  - OPENAI_API_BASE: "https://api.company.com/v1"
+    OPENAI_API_KEY: "sk-wxyz5678"
+    MODEL_NAME: "company-model-v1"
+    MODEL_TYPE: "mllm"
+    # 未设置MAIN_API 
