@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XpertEval - 评测报告</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #001529;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1, h2, h3, h4 {
+            color: #001529;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .main-model {
+            background-color: #e6f7ff;
+        }
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>XpertEval 评测报告</h1>
+            <div>生成时间：{{ generation_time }}</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="overview">
+            <h2>评测概述</h2>
+            <p>
+                <strong>主评测模型：</strong> {{ main_model_name }}<br>
+                <strong>对比模型数量：</strong> {{ comparison_models_count }}<br>
+                <strong>评测数据集：</strong> {{ dataset_name }}<br>
+                <strong>样本总数：</strong> {{ sample_count }}<br>
+                <strong>评测时间：</strong> {{ evaluation_time }}
+            </p>
+        </section>
+
+        <section id="model-comparison">
+            <h2>模型对比</h2>
+            
+            <div class="chart-container">
+                <h3>评测结果雷达图</h3>
+                <!-- 此处放置雷达图 -->
+                <div id="radar-chart">{{ radar_chart }}</div>
+            </div>
+            
+            <h3>评测指标详情</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>模型</th>
+                        {% for metric in metrics %}
+                        <th>{{ metric }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in models %}
+                    <tr {% if model.is_main %}class="main-model"{% endif %}>
+                        <td>{{ model.name }}</td>
+                        {% for metric in metrics %}
+                        <td>{{ model.scores[metric] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        {% if has_manual_eval %}
+        <section id="manual-eval">
+            <h2>人工评测结果</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>模型</th>
+                        {% for dimension in manual_dimensions %}
+                        <th>{{ dimension }}</th>
+                        {% endfor %}
+                        <th>总分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in manual_eval_results %}
+                    <tr {% if model.is_main %}class="main-model"{% endif %}>
+                        <td>{{ model.name }}</td>
+                        {% for dimension in manual_dimensions %}
+                        <td>{{ model.scores[dimension] }}</td>
+                        {% endfor %}
+                        <td><strong>{{ model.total_score }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        {% endif %}
+
+        <section id="performance">
+            <h2>性能指标</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>模型</th>
+                        <th>平均响应时间 (秒)</th>
+                        <th>平均Token消耗量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for model in performance_metrics %}
+                    <tr {% if model.is_main %}class="main-model"{% endif %}>
+                        <td>{{ model.name }}</td>
+                        <td>{{ model.avg_response_time }}</td>
+                        <td>{{ model.avg_token_usage }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section id="conclusion">
+            <h2>总结及推荐</h2>
+            <p>{{ conclusion }}</p>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>由 XpertEval 生成 | 版本 {{ version }}</p>
+        </div>
+    </footer>
+</body>
+</html> 

@@ -12,16 +12,16 @@
 
 ### 阶段一：核心框架搭建
 
-#### **任务1.1：项目初始化与环境配置** `[待执行]`
+#### **任务1.1：项目初始化与环境配置** `[已完成 - 2025-05-18 00:18]`
 - **涉及文件/目录**：
     - `/` (根目录): `.gitignore`, `VERSION`, `requirements.txt`, `LICENSE`
     - `STRUCTURE.md` 中定义的基础目录结构 (例如 `xperteval/`, `data/`, `docs/`, `tests/`, `scripts/` 等及其子目录)
 - **具体功能点**：
-    - `[待执行]` 创建 `.gitignore` 文件：包含 Python 缓存 (`__pycache__/`, `*.pyc`), IDE 配置文件, 测试覆盖率报告, 本地数据 (`data/custom/local_data/`, `results/`, `*.log`) 等。
-    - `[待执行]` 创建 `VERSION` 文件：写入初始版本号，例如 `0.1.0-alpha`。
-    - `[待执行]` 创建 `requirements.txt` 文件：初步添加核心依赖 `PyYAML`, `requests`, `gradio`。
-    - `[待执行]` 创建 `LICENSE` 文件：内容为 Apache 2.0 许可证文本。
-    - `[待执行]` 根据 `STRUCTURE.md` 创建项目的基础目录结构，包括所有规划的空文件夹和 `__init__.py` 文件以构成 Python 包。
+    - `[已完成 - 2025-05-18 00:18]` 创建 `.gitignore` 文件：包含 Python 缓存 (`__pycache__/`, `*.pyc`), IDE 配置文件, 测试覆盖率报告, 本地数据 (`data/custom/local_data/`, `results/`, `*.log`) 等。
+    - `[已完成 - 2025-05-18 00:18]` 创建 `VERSION` 文件：写入初始版本号，例如 `0.1.0-alpha`。
+    - `[已完成 - 2025-05-18 00:18]` 创建 `requirements.txt` 文件：初步添加核心依赖 `PyYAML`, `requests`, `gradio`。
+    - `[已完成 - 2025-05-18 00:18]` 创建 `LICENSE` 文件：内容为 Apache 2.0 许可证文本。
+    - `[已完成 - 2025-05-18 00:18]` 根据 `STRUCTURE.md` 创建项目的基础目录结构，包括所有规划的空文件夹和 `__init__.py` 文件以构成 Python 包。
 
 #### **任务1.2：模型配置模块 (`xperteval/config/`)** `[待执行]`
 - **涉及文件**： `xperteval/config/config_loader.py`, `xperteval/config/__init__.py`

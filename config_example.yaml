@@ -1,0 +1,24 @@
+# 示例 config.yaml
+default_params:
+  MAX_TOKENS: 4096
+  TEMPERATURE: 0.7
+  TOP_P: 0.95
+  TOP_K: 0.95
+  FREQUENCY_PENALTY: 0.0
+  PRESENCE_PENALTY: 0.0
+  REQUEST_TIMEOUT: 120
+
+models:
+  - OPENAI_API_BASE: "your_openai_api_base_1"
+    OPENAI_API_KEY: "your_api_key_1"
+    MODEL_NAME: "model_A (e.g., gpt-4)"
+    MODEL_TYPE: "mllm"
+    MAIN_API: true
+    # ... model_A 特定参数 (可选)
+
+  - OPENAI_API_BASE: "your_openai_api_base_2"
+    OPENAI_API_KEY: "your_api_key_2"
+    MODEL_NAME: "model_B (e.g., a fine-tuned model)"
+    MODEL_TYPE: "mllm"
+    MAIN_API: false
+    # ... model_B 特定参数 (可选) 
