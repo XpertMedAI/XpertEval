@@ -45,25 +45,25 @@
 - **`xperteval/config/__init__.py` 功能点**：
     - `[已完成 - 2025-05-18 00:22]` 确保 `config_loader` 中的主要功能可以被外部调用，例如 `from xperteval.config import load_model_configs`。
 
-#### **任务1.3：API 调用模块 (`xperteval/core/api_caller.py`)** `[待执行]`
+#### **任务1.3：API 调用模块 (`xperteval/core/api_caller.py`)** `[已完成 - 2025-05-18 00:40]`
 - **涉及文件**：`xperteval/core/api_caller.py`, `xperteval/core/__init__.py`
 - **`xperteval/core/api_caller.py` 功能点**：
-    - `[待执行]` 定义 `invoke_model_api(model_config: dict, request_payload: dict) -> dict` 函数 (或类方法)。
+    - `[已完成 - 2025-05-18 00:40]` 定义 `invoke_model_api(model_config: dict, request_payload: dict) -> dict` 函数 (或类方法)。
         - `model_config`: 单个模型的完整配置（包含 `OPENAI_API_BASE`, `OPENAI_API_KEY`, `REQUEST_TIMEOUT` 等）。
         - `request_payload`: 构造好的符合 OpenAI API 规范的请求体（例如包含 `model`, `messages`, `max_tokens` 等）。
-    - `[待执行]` 使用 `requests`库实现 HTTP POST 请求发送。
-        - `[待执行]` 设置请求 URL (来自 `model_config['OPENAI_API_BASE']` 并拼接适当的端点，如 `/chat/completions`)。
-        - `[待执行]` 设置请求头部 (Headers)，包括 `Content-Type: application/json` 和 `Authorization: Bearer <API_KEY>`。
-        - `[待执行]` 发送 JSON 格式的 `request_payload`。
-        - `[待执行]` 使用 `model_config['REQUEST_TIMEOUT']` 或全局默认值设置请求超时。
-    - `[待执行]` 实现响应处理：
-        - `[待执行]` 检查 HTTP 响应状态码。
-        - `[待执行]` 成功时 (如 200 OK)，解析响应的 JSON 内容。
-        - `[待执行]` 失败时 (如 4xx, 5xx)，记录错误信息并可能抛出自定义异常 (如 `ApiError`)。
-    - `[待执行]` 实现基本的错误重试机制 (可选，初期可简化)。
-    - `[待执行]` 添加详细的中文注释。
+    - `[已完成 - 2025-05-18 00:40]` 使用 `requests`库实现 HTTP POST 请求发送。
+        - `[已完成 - 2025-05-18 00:40]` 设置请求 URL (来自 `model_config['OPENAI_API_BASE']` 并拼接适当的端点，如 `/chat/completions`)。
+        - `[已完成 - 2025-05-18 00:40]` 设置请求头部 (Headers)，包括 `Content-Type: application/json` 和 `Authorization: Bearer <API_KEY>`。
+        - `[已完成 - 2025-05-18 00:40]` 发送 JSON 格式的 `request_payload`。
+        - `[已完成 - 2025-05-18 00:40]` 使用 `model_config['REQUEST_TIMEOUT']` 或全局默认值设置请求超时。
+    - `[已完成 - 2025-05-18 00:40]` 实现响应处理：
+        - `[已完成 - 2025-05-18 00:40]` 检查 HTTP 响应状态码。
+        - `[已完成 - 2025-05-18 00:40]` 成功时 (如 200 OK)，解析响应的 JSON 内容。
+        - `[已完成 - 2025-05-18 00:40]` 失败时 (如 4xx, 5xx)，记录错误信息并可能抛出自定义异常 (如 `ApiError`)。
+    - `[已完成 - 2025-05-18 00:40]` 实现基本的错误重试机制 (可选，初期可简化)。
+    - `[已完成 - 2025-05-18 00:40]` 添加详细的中文注释。
 - **`xperteval/core/__init__.py` 功能点**：
-    - `[待执行]` 使 `invoke_model_api` 可供其他模块调用。
+    - `[已完成 - 2025-05-18 00:40]` 使 `invoke_model_api` 可供其他模块调用。
 
 ### 阶段二：自动化评测流程
 
