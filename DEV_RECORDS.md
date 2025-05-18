@@ -82,28 +82,28 @@
 
 ### 阶段二：自动化评测流程
 
-#### **任务2.1：数据集处理模块 (`xperteval/datasets/`)** `[待执行]`
+#### **任务2.1：数据集处理模块 (`xperteval/datasets/`)** `[已完成 - 2025-05-18 12:56]`
 - **涉及文件**：`xperteval/datasets/base_dataset.py`, `xperteval/datasets/ms_swift_parser.py`, `xperteval/datasets/registered_datasets.py`, `xperteval/datasets/__init__.py`
 - **`xperteval/datasets/base_dataset.py` 功能点**：
-    - `[待执行]` 定义抽象基类 `BaseDataset` (可使用 `abc.ABC`)。
-    - `[待执行]` 定义抽象方法 `__init__(self, dataset_path: str, **kwargs)`。
-    - `[待执行]` 定义抽象方法 `__len__(self) -> int` 返回数据集样本数量。
-    - `[待执行]` 定义抽象方法 `__getitem__(self, idx: int) -> dict` 返回单个数据样本。
-    - `[待执行]` 定义 `load_data(self)` 抽象方法，用于加载和预处理数据。
+    - `[已完成 - 2025-05-18 12:56]` 定义抽象基类 `BaseDataset` (可使用 `abc.ABC`)。
+    - `[已完成 - 2025-05-18 12:56]` 定义抽象方法 `__init__(self, dataset_path: str, **kwargs)`。
+    - `[已完成 - 2025-05-18 12:56]` 定义抽象方法 `__len__(self) -> int` 返回数据集样本数量。
+    - `[已完成 - 2025-05-18 12:56]` 定义抽象方法 `__getitem__(self, idx: int) -> dict` 返回单个数据样本。
+    - `[已完成 - 2025-05-18 12:56]` 定义 `load_data(self)` 抽象方法，用于加载和预处理数据。
 - **`xperteval/datasets/ms_swift_parser.py` 功能点**：
-    - `[待执行]` 定义 `MsSwiftDataset` 类，继承自 `BaseDataset`。
-    - `[待执行]` 实现 `__init__`，接收数据集文件路径 (通常是 JSONL 文件)。
-    - `[待执行]` 实现 `load_data` 方法：
-        - `[待执行]` 读取并解析 `ms-swift` 格式的 JSONL 文件。
-        - `[待执行]` 处理单轮问答 (如包含 `query` 和 `response` 字段)。
-        - `[待执行]` 处理多轮问答 (如包含 `history` 列表, `query`, `response`)。
-        - `[待执行]` 处理数据中对多模态文件（图像、音频）的引用 (如文件路径或URL)，将其作为样本信息的一部分。
-    - `[待执行]` 实现 `__len__` 和 `__getitem__`。
+    - `[已完成 - 2025-05-18 12:56]` 定义 `MsSwiftDataset` 类，继承自 `BaseDataset`。
+    - `[已完成 - 2025-05-18 12:56]` 实现 `__init__`，接收数据集文件路径 (通常是 JSONL 文件)。
+    - `[已完成 - 2025-05-18 12:56]` 实现 `load_data` 方法：
+        - `[已完成 - 2025-05-18 12:56]` 读取并解析 `ms-swift` 格式的 JSONL 文件。
+        - `[已完成 - 2025-05-18 12:56]` 处理单轮问答 (如包含 `query` 和 `response` 字段)。
+        - `[已完成 - 2025-05-18 12:56]` 处理多轮问答 (如包含 `history` 列表, `query`, `response`)。
+        - `[已完成 - 2025-05-18 12:56]` 处理数据中对多模态文件（图像、音频）的引用 (如文件路径或URL)，将其作为样本信息的一部分。
+    - `[已完成 - 2025-05-18 12:56]` 实现 `__len__` 和 `__getitem__`。
 - **`xperteval/datasets/registered_datasets.py` 功能点** (初期可选，可直接用路径):
-    - `[待执行]` (可选) 定义一个字典或注册表，映射数据集名称到其实例化逻辑或路径。
-    - `[待执行]` (可选) 提供函数 `get_dataset(name: str, **kwargs) -> BaseDataset`。
+    - `[已完成 - 2025-05-18 12:56]` (可选) 定义一个字典或注册表，映射数据集名称到其实例化逻辑或路径。
+    - `[已完成 - 2025-05-18 12:56]` (可选) 提供函数 `get_dataset(name: str, **kwargs) -> BaseDataset`。
 - **`xperteval/datasets/__init__.py` 功能点**：
-    - `[待执行]` 导出 `BaseDataset`, `MsSwiftDataset`, (可选) `get_dataset`。
+    - `[已完成 - 2025-05-18 12:56]` 导出 `BaseDataset`, `MsSwiftDataset`, (可选) `get_dataset`。
 
 #### **任务2.2：评测器基类与初步实现 (`xperteval/core/base_evaluator.py`, `xperteval/evaluators/`)** `[待执行]`
 - **涉及文件**：`xperteval/core/base_evaluator.py`, `xperteval/evaluators/__init__.py`, `xperteval/evaluators/common/__init__.py`, `xperteval/evaluators/common/accuracy.py` (示例)
