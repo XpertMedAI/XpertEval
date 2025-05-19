@@ -2,29 +2,6 @@
   "version": "1.0.0",
   "last_updated": "2025-05-19",
   "datasets": {
-    "example_dataset": {
-      "name": "Example Dataset",
-      "description": "This is a sample dataset for testing.",
-      "huggingface_url": null,
-      "modelscope_url": null,
-      "local_path": "data/integrated/example_dataset",
-      "task_type": "qa",
-      "language": "en",
-      "citation": "XpertEval Team, 2025",
-      "license": "MIT",
-      "size": "1 sample",
-      "formats": {
-        "original": "jsonl",
-        "xpert_format": "jsonl"
-      },
-      "converter": "xpert_format",
-      "media_files": true,
-      "splits": [
-        "train",
-        "dev",
-        "test"
-      ]
-    },
     "mmlu": {
       "name": "MMLU (Massive Multitask Language Understanding)",
       "description": "包含57个学科领域的多选题评测集，测试模型的知识广度",
@@ -75,23 +52,6 @@
         "xpert_format": "jsonl"
       },
       "converter": "gsm8k_to_xpert"
-    },
-    "math": {
-      "name": "MATH",
-      "description": "高中和大学水平的数学问题，包含复杂公式，需要形式化推理",
-      "huggingface_url": null,
-      "modelscope_url": null,
-      "local_path": "data/integrated/math",
-      "task_type": "math",
-      "language": "en",
-      "citation": "Hendrycks et al., 2021",
-      "license": "MIT",
-      "size": "12,500 problems",
-      "formats": {
-        "original": "json",
-        "xpert_format": "jsonl"
-      },
-      "converter": "math_to_xpert"
     },
     "human_eval": {
       "name": "HumanEval",
