@@ -47,7 +47,6 @@ footer_content: "Copyright &copy; 2025 XpertEval Team. 基于 <a href=\"https://
 head_scripts:
   - url: https://cdn.jsdelivr.net/npm/mermaid@8.13.3/dist/mermaid.min.js
     crossorigin: anonymous
-  - url: /assets/js/toc.js
 
 # 自定义样式
 callouts:
@@ -83,7 +82,7 @@ navigation:
   - title: 首页
     url: /
   - title: 快速开始
-    url: /quick_start.html
+    url: /quick_start
   - title: 用户手册
     url: /user_manual/
     submenu:

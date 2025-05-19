@@ -12,7 +12,7 @@ toc: true
 轻量级、全面的大模型评测工具，支持通用能力和专业领域评测
 {: .fs-6 .fw-300 }
 
-[快速开始](/quick_start.html){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[快速开始](./quick_start){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [查看GitHub](https://github.com/XpertMedAI/XpertEval){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
