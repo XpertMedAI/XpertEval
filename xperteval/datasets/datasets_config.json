@@ -1,0 +1,181 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-05-19",
+  "datasets": {
+    "mmlu": {
+      "name": "MMLU (Massive Multitask Language Understanding)",
+      "description": "包含57个学科领域的多选题评测集，测试模型的知识广度",
+      "huggingface_url": "https://huggingface.co/datasets/cais/mmlu",
+      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/mmlu",
+      "local_path": "data/integrated/mmlu",
+      "task_type": "choice",
+      "language": "en",
+      "citation": "Hendrycks et al., 2020",
+      "license": "MIT",
+      "size": "15,908 questions",
+      "formats": {
+        "original": "csv",
+        "xpert_format": "jsonl"
+      },
+      "converter": "mmlu_to_xpert"
+    },
+    "cmmlu": {
+      "name": "CMMLU (Chinese Massive Multitask Language Understanding)",
+      "description": "专注于中文知识评测，涵盖67个中文学科领域",
+      "huggingface_url": "https://huggingface.co/datasets/haonan-li/cmmlu",
+      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/cmmlu",
+      "local_path": "data/integrated/cmmlu",
+      "task_type": "choice",
+      "language": "zh",
+      "citation": "Li et al., 2023",
+      "license": "Apache 2.0",
+      "size": "11,985 questions",
+      "formats": {
+        "original": "csv",
+        "xpert_format": "jsonl"
+      },
+      "converter": "cmmlu_to_xpert"
+    },
+    "gsm8k": {
+      "name": "GSM8K (Grade School Math 8K)",
+      "description": "小学数学应用题，需要多步推理",
+      "huggingface_url": "https://huggingface.co/datasets/gsm8k",
+      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/gsm8k",
+      "local_path": "data/integrated/gsm8k",
+      "task_type": "math",
+      "language": "en",
+      "citation": "Cobbe et al., 2021",
+      "license": "MIT",
+      "size": "8,500 problems",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "gsm8k_to_xpert"
+    },
+    "math": {
+      "name": "MATH",
+      "description": "高中和大学水平的数学问题，包含复杂公式，需要形式化推理",
+      "huggingface_url": "https://huggingface.co/datasets/hendrycks/math",
+      "modelscope_url": null,
+      "local_path": "data/integrated/math",
+      "task_type": "math",
+      "language": "en",
+      "citation": "Hendrycks et al., 2021",
+      "license": "MIT",
+      "size": "12,500 problems",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "math_to_xpert"
+    },
+    "human_eval": {
+      "name": "HumanEval",
+      "description": "代码生成任务，需要根据描述生成完整可运行的函数",
+      "huggingface_url": "https://huggingface.co/datasets/openai/human-eval",
+      "modelscope_url": null,
+      "local_path": "data/integrated/human_eval",
+      "task_type": "code",
+      "language": "en",
+      "programming_language": "python",
+      "citation": "Chen et al., 2021",
+      "license": "MIT",
+      "size": "164 problems",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "human_eval_to_xpert"
+    },
+    "ceval": {
+      "name": "C-Eval",
+      "description": "中文评测集，包含多个领域的选择题",
+      "huggingface_url": "https://huggingface.co/datasets/ceval/ceval",
+      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/ceval",
+      "local_path": "data/integrated/ceval",
+      "task_type": "choice",
+      "language": "zh",
+      "citation": "Huang et al., 2023",
+      "license": "CC BY-NC 4.0",
+      "size": "13,948 questions",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "ceval_to_xpert"
+    },
+    "mmbench": {
+      "name": "MMBench",
+      "description": "视觉-语言理解任务，需要模型理解图像内容并回答问题",
+      "huggingface_url": "https://huggingface.co/datasets/MMBench/mmbench",
+      "modelscope_url": null,
+      "local_path": "data/integrated/mmbench",
+      "task_type": "vision",
+      "language": "en",
+      "citation": "Liu et al., 2023",
+      "license": "CC BY-NC 4.0",
+      "size": "约2,500个样本",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "mmbench_to_xpert",
+      "media_files": true
+    },
+    "llava_bench": {
+      "name": "LLaVA-Bench",
+      "description": "对话式视觉-语言任务，评测模型对图像的理解和描述能力",
+      "huggingface_url": "https://huggingface.co/datasets/liuhaotian/llava-bench",
+      "modelscope_url": null,
+      "local_path": "data/integrated/llava_bench",
+      "task_type": "vision",
+      "language": "en",
+      "citation": "Liu et al., 2023",
+      "license": "Apache 2.0",
+      "size": "约60个样本",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "llava_bench_to_xpert",
+      "media_files": true
+    },
+    "seed_bench": {
+      "name": "SEED-Bench",
+      "description": "包含图像和视频理解任务，测试模型对视觉内容的多方面理解能力",
+      "huggingface_url": "https://huggingface.co/datasets/AILab-CVC/SEED-Bench",
+      "modelscope_url": null,
+      "local_path": "data/integrated/seed_bench",
+      "task_type": "vision",
+      "language": "en",
+      "citation": "Li et al., 2023",
+      "license": "CC BY-NC-SA 4.0",
+      "size": "约19,000个样本",
+      "formats": {
+        "original": "jsonl",
+        "xpert_format": "jsonl"
+      },
+      "converter": "seed_bench_to_xpert",
+      "media_files": true
+    },
+    "mm_vet": {
+      "name": "MM-Vet",
+      "description": "专注于复杂的视觉推理任务，包括图表理解、视觉常识推理等",
+      "huggingface_url": "https://huggingface.co/datasets/MMVET/mm-vet",
+      "modelscope_url": null,
+      "local_path": "data/integrated/mm_vet",
+      "task_type": "vision",
+      "language": "en",
+      "citation": "Yu et al., 2023",
+      "license": "CC BY-NC 4.0",
+      "size": "200个样本",
+      "formats": {
+        "original": "json",
+        "xpert_format": "jsonl"
+      },
+      "converter": "mm_vet_to_xpert",
+      "media_files": true
+    }
+  }
+} 

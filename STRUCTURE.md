@@ -24,8 +24,22 @@
 │   ├── datasets/               # 数据集处理与加载
 │   │   ├── __init__.py
 │   │   ├── base_dataset.py     # 数据集基类
-│   │   ├── ms_swift_parser.py  # 解析 ms-swift 格式数据集
-│   │   └── registered_datasets.py # 管理和注册已集成的数据集
+│   │   ├── xpert_format.py     # 解析 XpertFormat 格式数据集
+│   │   ├── datasets_config.json# 开源评测数据集配置文件
+│   │   ├── dataset_manager.py  # 数据集下载、转换和管理
+│   │   ├── registered_datasets.py # 管理和注册已集成的数据集
+│   │   ├── README.md           # 数据集格式说明文档
+│   │   ├── common_benchmarks/  # 通用评测数据集解析器
+│   │   │   ├── __init__.py
+│   │   │   ├── mmlu_dataset.py # MMLU数据集解析器
+│   │   │   └── ...            # 其他通用评测数据集解析器
+│   │   ├── multimodal_benchmarks/ # 多模态评测数据集解析器
+│   │   │   ├── __init__.py
+│   │   │   ├── mmbench_dataset.py # MMBench数据集解析器
+│   │   │   └── ...            # 其他多模态评测数据集解析器
+│   │   └── converters/        # 数据集格式转换工具
+│   │       ├── __init__.py
+│   │       └── to_xpert_format.py # 各种格式转换为XpertFormat的工具
 │   ├── evaluators/             # 具体评测指标实现
 │   │   ├── __init__.py
 │   │   ├── common/             # 通用能力评测指标
@@ -51,9 +65,19 @@
 ├── data/                       # 存放评测数据集
 │   ├── custom/                 # 用户自定义数据集存放目录
 │   │   └── README.md           # 说明自定义数据集格式和放置要求
+│   ├── downloads/              # 数据集下载临时目录
+│   ├── examples/               # 示例数据集
+│   │   ├── choice_example.jsonl # 选择题格式示例
+│   │   ├── math_example.jsonl  # 数学问题格式示例
+│   │   ├── code_example.jsonl  # 代码生成任务格式示例
+│   │   └── multimodal_example.jsonl # 多模态任务格式示例
 │   └── integrated/             # 集成的开源/自建数据集
-│       ├── tcm_tongue_example/ # (示例) 中医舌诊图片评测集
-│       └── common_qa_example/  # (示例) 通用问答评测集
+│       ├── mmlu/               # MMLU数据集目录
+│       │   ├── dataset.jsonl   # 转换后的XpertFormat格式数据集
+│       │   ├── original/       # 原始格式数据文件
+│       │   └── README.md       # 数据集说明
+│       ├── cmmlu/              # CMMLU数据集目录
+│       └── ...                 # 其他数据集目录
 ├── docs/                       # 项目文档 (用于 GitHub Pages)
 │   ├── _config.yml             # Jekyll 或其他静态站点生成器配置文件 (适配 Ant Design 风格)
 │   ├── index.md                # 文档首页
@@ -72,7 +96,11 @@
 │       └── test_full_eval_flow.py
 ├── scripts/                    # 辅助脚本
 │   ├── run_tests.sh            # 运行测试脚本
-│   └── build_docker.sh         # 构建 Docker 镜像脚本
+│   ├── build_docker.sh         # 构建 Docker 镜像脚本
+│   ├── test_xpert_format.py    # XpertFormat数据集解析器测试脚本
+│   ├── test_dataset_manager.py # 数据集管理器测试脚本
+│   ├── convert_dataset.py      # 数据集转换命令行工具
+│   └── preview_dataset.py      # 数据集预览工具
 ├── results/                    # 评测结果默认输出目录 (由 .gitignore 排除)
 ├── templates/                  # 模板文件 (例如报告模板)
 │   └── report_template.html    # HTML 报告模板示例
@@ -122,8 +150,14 @@
 
 -   **`datasets/`**: 
     -   **`base_dataset.py`**: 数据集基类，定义加载、迭代等通用接口。
-    -   **`ms_swift_parser.py`**: 实现对 `ms-swift` 标准数据集格式的解析逻辑，支持多轮对话。
+    -   **`xpert_format.py`**: 实现对 `XpertFormat` 统一格式的解析逻辑，支持多种任务类型和多模态数据。
+    -   **`datasets_config.json`**: 开源评测数据集配置文件，包含数据集的元信息和下载地址。
+    -   **`dataset_manager.py`**: 数据集管理器，负责数据集的下载、转换和管理。
     -   **`registered_datasets.py`**: 提供注册机制，方便按名称引用和加载集成的数据集。
+    -   **`README.md`**: 详细说明各种评测数据集格式和XpertFormat统一格式方案。
+    -   **`common_benchmarks/`**: 存放通用评测数据集（如MMLU、CMMLU等）的专用解析器。
+    -   **`multimodal_benchmarks/`**: 存放多模态评测数据集（如MMBench、LLaVA-Bench等）的专用解析器。
+    -   **`converters/`**: 数据集格式转换工具，将各种原始格式转换为XpertFormat。
     -   **中文注释**: 说明数据加载逻辑和支持的数据格式。
 
 -   **`evaluators/`**: 
@@ -153,9 +187,11 @@
 
 ### 3.2 `data/` (评测数据集)
 
--   **`custom/`**: 用户存放自定义数据集的目录。`README.md` 中需详细说明数据格式要求（应与 `ms-swift` 兼容）。
--   **`integrated/`**: 存放项目集成的各类评测数据集，按领域或类型分子目录。
-    -   **中文注释**: 每个集成数据集目录下可以有一个简短的 `README.cn.md` 说明数据集来源、内容和格式。
+-   **`custom/`**: 用户存放自定义数据集的目录。`README.md` 中需详细说明数据格式要求（应与 `XpertFormat` 兼容）。
+-   **`downloads/`**: 数据集下载的临时存储目录。
+-   **`examples/`**: 存放各种格式的示例数据集，用于测试和演示。
+-   **`integrated/`**: 存放项目集成的各类评测数据集，按数据集名称分子目录。
+    -   **中文注释**: 每个集成数据集目录下可以有一个简短的 `README.md` 说明数据集来源、内容和格式。
 
 ### 3.3 `docs/` (项目文档)
 
@@ -173,6 +209,10 @@
 
 -   **`run_tests.sh`**: 自动化运行所有测试用例的脚本。
 -   **`build_docker.sh`**: 构建项目 Docker 镜像的脚本。
+-   **`test_xpert_format.py`**: 测试XpertFormat数据集解析器的功能。
+-   **`test_dataset_manager.py`**: 测试数据集管理器的功能。
+-   **`convert_dataset.py`**: 数据集转换命令行工具。
+-   **`preview_dataset.py`**: 数据集预览工具。
 
 ### 3.6 根目录文件
 

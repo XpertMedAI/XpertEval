@@ -6,17 +6,19 @@
 """
 
 from .base_dataset import BaseDataset
-from .ms_swift_parser import MsSwiftDataset
+from .xpert_format import XpertFormatDataset
 from .registered_datasets import (
     get_dataset,
     list_available_datasets,
     register_dataset_type,
     scan_integrated_datasets
 )
+from .dataset_manager import DatasetManager
 
 __all__ = [
     'BaseDataset',
-    'MsSwiftDataset',
+    'XpertFormatDataset',
+    'DatasetManager',
     'get_dataset',
     'list_available_datasets',
     'register_dataset_type',

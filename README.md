@@ -4,7 +4,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/XpertMedAI/XpertEval.svg?style=social&label=Star&maxAge=2592000)](https://github.com/XpertMedAI/XpertEval/stargazers/)
 [![GitHub Forks](https://img.shields.io/github/forks/XpertMedAI/XpertEval.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/XpertMedAI/XpertEval/network/members)
 
-**项目语言: 中文** | **作者: [rookielittleblack](https://github.com/rookie-littleblack)** | **GitHub: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval)**
+**项目语言: 中文** | **作者: [rookie-littleblack](https://github.com/rookie-littleblack)** | **GitHub: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval)**
 
 ---
 
@@ -46,6 +46,7 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
     # conda create -n xperteval -y python=3.10
     # conda activate xperteval
     # pip install pyyaml
+    # pip install tqdm
     # pip install -r requirements.txt
     ```
 2.  **配置模型 API**：
@@ -110,4 +111,4 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
 ## 联系我们
 
 - **项目仓库**: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval) 
-- **项目作者**: [rookielittleblack](https://github.com/rookie-littleblack)
+- **项目作者**: [rookie-littleblack](https://github.com/rookie-littleblack)

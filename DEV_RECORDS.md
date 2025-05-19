@@ -82,7 +82,7 @@
 
 ### 阶段二：自动化评测流程
 
-#### **任务2.1：数据集处理模块 (`xperteval/datasets/`)** `[执行中]`
+#### **任务2.1：数据集处理模块 (`xperteval/datasets/`)** `[已完成]`
 - **涉及文件**：`xperteval/datasets/base_dataset.py`, `xperteval/datasets/xpert_format.py`, `xperteval/datasets/registered_datasets.py`, `xperteval/datasets/__init__.py`, `xperteval/datasets/README.md`
 - **`xperteval/datasets/base_dataset.py` 功能点**：
     - `[已完成 - 2025-05-18 12:56]` 定义抽象基类 `BaseDataset` (可使用 `abc.ABC`)。
@@ -91,152 +91,163 @@
     - `[已完成 - 2025-05-18 12:56]` 定义抽象方法 `__getitem__(self, idx: int) -> dict` 返回单个数据样本。
     - `[已完成 - 2025-05-18 12:56]` 定义 `load_data(self)` 抽象方法，用于加载和预处理数据。
 - **`xperteval/datasets/xpert_format.py` 功能点**：
-    - `[待执行]` 定义 `XpertFormatDataset` 类，继承自 `BaseDataset`。
-    - `[待执行]` 实现 `__init__`，接收数据集文件路径 (通常是 JSONL 文件)。
-    - `[待执行]` 实现 `load_data` 方法：
-        - `[待执行]` 读取并解析 `XpertFormat` 格式的 JSONL 文件。
-        - `[待执行]` 处理单轮问答 (如包含 `query` 和 `response` 字段)。
-        - `[待执行]` 处理多轮问答 (如包含 `history` 列表, `query`, `response`)。
-        - `[待执行]` 处理数据中对多模态文件（图像、音频、视频）的引用 (如文件路径或URL)，将其作为样本信息的一部分。
-        - `[待执行]` 处理选择题格式 (如包含 `choices` 列表)。
-        - `[待执行]` 处理统一的答案格式 (如包含 `answer.type`, `answer.value`, `answer.explanation`)。
-        - `[待执行]` 处理元数据 (如包含 `meta.task_type`, `meta.category`, `meta.difficulty` 等)。
-    - `[待执行]` 实现 `__len__` 和 `__getitem__`。
-    - `[待执行]` 实现 `validate_format` 方法，用于验证数据是否符合XpertFormat规范。
+    - `[已完成 - 2025-05-19 10:49]` 定义 `XpertFormatDataset` 类，继承自 `BaseDataset`。
+    - `[已完成 - 2025-05-19 10:49]` 实现 `__init__`，接收数据集文件路径 (通常是 JSONL 文件)。
+    - `[已完成 - 2025-05-19 10:49]` 实现 `load_data` 方法：
+        - `[已完成 - 2025-05-19 10:49]` 读取并解析 `XpertFormat` 格式的 JSONL 文件。
+        - `[已完成 - 2025-05-19 10:49]` 处理单轮问答 (如包含 `query` 和 `response` 字段)。
+        - `[已完成 - 2025-05-19 10:49]` 处理多轮问答 (如包含 `history` 列表, `query`, `response`)。
+        - `[已完成 - 2025-05-19 10:49]` 处理数据中对多模态文件（图像、音频、视频）的引用 (如文件路径或URL)，将其作为样本信息的一部分。
+        - `[已完成 - 2025-05-19 10:49]` 处理选择题格式 (如包含 `choices` 列表)。
+        - `[已完成 - 2025-05-19 10:49]` 处理统一的答案格式 (如包含 `answer.type`, `answer.value`, `answer.explanation`)。
+        - `[已完成 - 2025-05-19 10:49]` 处理元数据 (如包含 `meta.task_type`, `meta.category`, `meta.difficulty` 等)。
+    - `[已完成 - 2025-05-19 10:49]` 实现 `__len__` 和 `__getitem__`。
+    - `[已完成 - 2025-05-19 10:49]` 实现 `validate_format` 方法，用于验证数据是否符合XpertFormat规范。
 - **`xperteval/datasets/registered_datasets.py` 功能点**:
     - `[已完成 - 2025-05-18 12:56]` 定义一个字典或注册表，映射数据集名称到其实例化逻辑或路径。
     - `[已完成 - 2025-05-18 12:56]` 提供函数 `get_dataset(name: str, **kwargs) -> BaseDataset`。
-    - `[待执行]` 更新 `DATASET_REGISTRY` 字典，将 `ms-swift` 替换为 `xpert-format`。
-    - `[待执行]` 更新数据集扫描和加载逻辑，支持 XpertFormat。
+    - `[已完成 - 2025-05-19 10:49]` 更新 `DATASET_REGISTRY` 字典，将 `ms-swift` 替换为 `xpert-format`。
+    - `[已完成 - 2025-05-19 10:49]` 更新数据集扫描和加载逻辑，支持 XpertFormat。
 - **`xperteval/datasets/__init__.py` 功能点**：
     - `[已完成 - 2025-05-18 12:56]` 导出 `BaseDataset`。
-    - `[待执行]` 导出 `XpertFormatDataset` (替代 `MsSwiftDataset`)。
+    - `[已完成 - 2025-05-19 10:49]` 导出 `XpertFormatDataset` (替代 `MsSwiftDataset`)。
     - `[已完成 - 2025-05-18 12:56]` 导出 `get_dataset` 等函数。
 - **`xperteval/datasets/README.md` 功能点**：
     - `[已完成 - 2025-05-19 10:30]` 详细分析各评测数据集的格式特点。
     - `[已完成 - 2025-05-19 10:30]` 提出 XpertFormat 统一格式方案。
     - `[已完成 - 2025-05-19 10:30]` 定义各类数据集到 XpertFormat 的转换策略。
     - `[已完成 - 2025-05-19 10:30]` 描述不同任务类型的评分策略。
+- **示例数据集和测试**:
+    - `[已完成 - 2025-05-19 10:49]` 创建选择题格式的示例数据集 (`data/examples/choice_example.jsonl`)。
+    - `[已完成 - 2025-05-19 10:49]` 创建数学问题格式的示例数据集 (`data/examples/math_example.jsonl`)。
+    - `[已完成 - 2025-05-19 10:49]` 创建代码生成任务格式的示例数据集 (`data/examples/code_example.jsonl`)。
+    - `[已完成 - 2025-05-19 10:49]` 创建多模态任务格式的示例数据集 (`data/examples/multimodal_example.jsonl`)。
+    - `[已完成 - 2025-05-19 10:49]` 实现测试脚本 (`scripts/test_xpert_format.py`) 并验证功能正常。
+- **架构调整**:
+    - `[已完成 - 2025-05-19 11:10]` 删除不再需要的 `ms_swift_parser.py` 文件，完全由 `xpert_format.py` 替代。
+    - `[已完成 - 2025-05-19 11:10]` 创建 `datasets_config.json` 配置文件，用于管理开源评测数据集的下载和转换。
+    - `[已完成 - 2025-05-19 11:10]` 实现 `dataset_manager.py`，提供数据集下载、转换和管理功能。
+    - `[已完成 - 2025-05-19 11:10]` 更新项目架构文档 (`STRUCTURE.md`)，反映当前的项目架构变化。
 
-#### **任务2.1.1：扩展数据集处理模块以支持更多开源评测数据集** `[待执行]`
+#### **任务2.1.1：扩展数据集处理模块以支持更多开源评测数据集** `[执行中]`
 - **涉及文件**：`xperteval/datasets/common_benchmarks/`
 - **功能点**：
-    - `[待执行]` 创建 `common_benchmarks` 子目录，用于存放各种通用评测数据集的解析器
-    - `[待执行]` 实现 `mmlu_dataset.py`: 
-        - `[待执行]` 定义 `MMLUDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 MMLU 格式到 XpertFormat 的转换
-        - `[待执行]` 支持多选题特有的评分逻辑
-    - `[待执行]` 实现 `cmmlu_dataset.py`: 
-        - `[待执行]` 定义 `CMMLUDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 CMMLU 格式到 XpertFormat 的转换
-        - `[待执行]` 处理中文特有的字符和编码问题
-    - `[待执行]` 实现 `gsm8k_dataset.py`: 
-        - `[待执行]` 定义 `GSM8KDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 GSM8K 格式到 XpertFormat 的转换
-        - `[待执行]` 支持数学解题步骤和最终答案的提取
-    - `[待执行]` 实现 `math_dataset.py`: 
-        - `[待执行]` 定义 `MATHDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 MATH 格式到 XpertFormat 的转换
-        - `[待执行]` 处理 LaTeX 公式的正确解析和呈现
-    - `[待执行]` 实现 `human_eval_dataset.py`: 
-        - `[待执行]` 定义 `HumanEvalDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 HumanEval 格式到 XpertFormat 的转换
-        - `[待执行]` 支持代码生成任务的特殊处理
-    - `[待执行]` 实现 `ceval_dataset.py`: 
-        - `[待执行]` 定义 `CEvalDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 C-Eval 格式到 XpertFormat 的转换
-        - `[待执行]` 处理中文特有的字符和编码问题
+    - `[执行中]` 创建 `common_benchmarks` 子目录，用于存放各种通用评测数据集的解析器
+    - `[执行中]` 实现 `mmlu_dataset.py`: 
+        - `[执行中]` 定义 `MMLUDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 MMLU 格式到 XpertFormat 的转换
+        - `[执行中]` 支持多选题特有的评分逻辑
+    - `[执行中]` 实现 `cmmlu_dataset.py`: 
+        - `[执行中]` 定义 `CMMLUDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 CMMLU 格式到 XpertFormat 的转换
+        - `[执行中]` 处理中文特有的字符和编码问题
+    - `[执行中]` 实现 `gsm8k_dataset.py`: 
+        - `[执行中]` 定义 `GSM8KDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 GSM8K 格式到 XpertFormat 的转换
+        - `[执行中]` 支持数学解题步骤和最终答案的提取
+    - `[执行中]` 实现 `math_dataset.py`: 
+        - `[执行中]` 定义 `MATHDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 MATH 格式到 XpertFormat 的转换
+        - `[执行中]` 处理 LaTeX 公式的正确解析和呈现
+    - `[执行中]` 实现 `human_eval_dataset.py`: 
+        - `[执行中]` 定义 `HumanEvalDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 HumanEval 格式到 XpertFormat 的转换
+        - `[执行中]` 支持代码生成任务的特殊处理
+    - `[执行中]` 实现 `ceval_dataset.py`: 
+        - `[执行中]` 定义 `CEvalDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 C-Eval 格式到 XpertFormat 的转换
+        - `[执行中]` 处理中文特有的字符和编码问题
 - **注意事项**：
-    - `[待执行]` 每个解析器都应继承 `BaseDataset` 并实现其抽象方法
-    - `[待执行]` 需处理各数据集特有的格式和结构，转换为统一的 XpertFormat 内部表示
-    - `[待执行]` 添加适当的中文注释和文档字符串
+    - `[执行中]` 每个解析器都应继承 `BaseDataset` 并实现其抽象方法
+    - `[执行中]` 需处理各数据集特有的格式和结构，转换为统一的 XpertFormat 内部表示
+    - `[执行中]` 添加适当的中文注释和文档字符串
 
-#### **任务2.1.2：扩展数据集处理模块以支持多模态评测数据集** `[待执行]`
+#### **任务2.1.2：扩展数据集处理模块以支持多模态评测数据集** `[执行中]`
 - **涉及文件**：`xperteval/datasets/multimodal_benchmarks/`
 - **功能点**：
-    - `[待执行]` 创建 `multimodal_benchmarks` 子目录，用于存放多模态评测数据集的解析器
-    - `[待执行]` 实现 `mmbench_dataset.py`: 
-        - `[待执行]` 定义 `MMBenchDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 MMBench 格式到 XpertFormat 的转换
-        - `[待执行]` 处理图像文件路径的解析和验证
-    - `[待执行]` 实现 `llava_bench_dataset.py`: 
-        - `[待执行]` 定义 `LLaVABenchDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 LLaVA-Bench 格式到 XpertFormat 的转换
-        - `[待执行]` 处理对话式视觉问答的特殊结构
-    - `[待执行]` 实现 `seed_bench_dataset.py`: 
-        - `[待执行]` 定义 `SEEDBenchDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 SEED-Bench 格式到 XpertFormat 的转换
-        - `[待执行]` 处理多图像和视频文件的引用
-    - `[待执行]` 实现 `mm_vet_dataset.py`: 
-        - `[待执行]` 定义 `MMVetDataset` 类，继承 `BaseDataset`
-        - `[待执行]` 实现从原始 MM-Vet 格式到 XpertFormat 的转换
-        - `[待执行]` 处理复杂视觉推理任务的特殊要求
+    - `[执行中]` 创建 `multimodal_benchmarks` 子目录，用于存放多模态评测数据集的解析器
+    - `[执行中]` 实现 `mmbench_dataset.py`: 
+        - `[执行中]` 定义 `MMBenchDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 MMBench 格式到 XpertFormat 的转换
+        - `[执行中]` 处理图像文件路径的解析和验证
+    - `[执行中]` 实现 `llava_bench_dataset.py`: 
+        - `[执行中]` 定义 `LLaVABenchDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 LLaVA-Bench 格式到 XpertFormat 的转换
+        - `[执行中]` 处理对话式视觉问答的特殊结构
+    - `[执行中]` 实现 `seed_bench_dataset.py`: 
+        - `[执行中]` 定义 `SEEDBenchDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 SEED-Bench 格式到 XpertFormat 的转换
+        - `[执行中]` 处理多图像和视频文件的引用
+    - `[执行中]` 实现 `mm_vet_dataset.py`: 
+        - `[执行中]` 定义 `MMVetDataset` 类，继承 `BaseDataset`
+        - `[执行中]` 实现从原始 MM-Vet 格式到 XpertFormat 的转换
+        - `[执行中]` 处理复杂视觉推理任务的特殊要求
 - **注意事项**：
-    - `[待执行]` 特别关注多模态数据的处理，包括图像、视频、音频等资源的路径解析和加载
-    - `[待执行]` 确保资源文件的存在性检查和错误处理
-    - `[待执行]` 实现多模态数据的预处理功能（如需要）
+    - `[执行中]` 特别关注多模态数据的处理，包括图像、视频、音频等资源的路径解析和加载
+    - `[执行中]` 确保资源文件的存在性检查和错误处理
+    - `[执行中]` 实现多模态数据的预处理功能（如需要）
 
-#### **任务2.1.3：实现数据集格式转换工具** `[待执行]`
+#### **任务2.1.3：实现数据集格式转换工具** `[执行中]`
 - **涉及文件**：`xperteval/datasets/converters/`, `scripts/convert_dataset.py`
 - **功能点**：
-    - `[待执行]` 创建 `converters` 子目录，用于存放各种数据集格式转换工具
-    - `[待执行]` 实现 `to_xpert_format.py`: 
-        - `[待执行]` 定义通用的转换接口 `convert_to_xpert_format(input_path, output_path, dataset_type)`
-        - `[待执行]` 实现各种格式到 XpertFormat 的转换函数
-        - `[待执行]` 支持批量转换功能
-    - `[待执行]` 实现 `convert_dataset.py` 脚本:
-        - `[待执行]` 提供命令行接口进行数据集转换
-        - `[待执行]` 支持各种转换选项和参数
-        - `[待执行]` 提供详细的转换日志和报告
-    - `[待执行]` 实现 `format_validator.py`:
-        - `[待执行]` 定义 `validate_xpert_format(data)` 函数，验证数据是否符合 XpertFormat 规范
-        - `[待执行]` 提供详细的错误信息和修复建议
+    - `[执行中]` 创建 `converters` 子目录，用于存放各种数据集格式转换工具
+    - `[执行中]` 实现 `to_xpert_format.py`: 
+        - `[执行中]` 定义通用的转换接口 `convert_to_xpert_format(input_path, output_path, dataset_type)`
+        - `[执行中]` 实现各种格式到 XpertFormat 的转换函数
+        - `[执行中]` 支持批量转换功能
+    - `[执行中]` 实现 `convert_dataset.py` 脚本:
+        - `[执行中]` 提供命令行接口进行数据集转换
+        - `[执行中]` 支持各种转换选项和参数
+        - `[执行中]` 提供详细的转换日志和报告
+    - `[执行中]` 实现 `format_validator.py`:
+        - `[执行中]` 定义 `validate_xpert_format(data)` 函数，验证数据是否符合 XpertFormat 规范
+        - `[执行中]` 提供详细的错误信息和修复建议
 - **注意事项**：
-    - `[待执行]` 转换工具应保留原始数据集的所有关键信息
-    - `[待执行]` 提供详细的使用说明和示例
-    - `[待执行]` 确保转换过程的可重现性和稳定性
+    - `[执行中]` 转换工具应保留原始数据集的所有关键信息
+    - `[执行中]` 提供详细的使用说明和示例
+    - `[执行中]` 确保转换过程的可重现性和稳定性
 
-#### **任务2.1.4：增强数据集注册和管理机制** `[待执行]`
+#### **任务2.1.4：增强数据集注册和管理机制** `[执行中]`
 - **涉及文件**：`xperteval/datasets/registered_datasets.py`, `xperteval/datasets/dataset_manager.py`
 - **功能点**：
-    - `[待执行]` 扩展 `DATASET_REGISTRY` 以包含所有新增的数据集类型
-    - `[待执行]` 增强 `scan_integrated_datasets` 函数:
-        - `[待执行]` 支持自动识别数据集类型和格式
-        - `[待执行]` 处理多文件数据集的特殊情况
-        - `[待执行]` 提供更详细的数据集元信息
-    - `[待执行]` 创建 `dataset_manager.py`:
-        - `[待执行]` 实现 `DatasetManager` 类，提供统一的数据集管理接口
-        - `[待执行]` 实现数据集版本管理和元数据存储
-        - `[待执行]` 添加数据集预览和统计信息功能
-        - `[待执行]` 支持数据集分割（训练/验证/测试）
-        - `[待执行]` 支持数据集采样和过滤
-    - `[待执行]` 实现数据集缓存机制:
-        - `[待执行]` 优化频繁访问的数据集加载性能
-        - `[待执行]` 管理缓存大小和生命周期
+    - `[执行中]` 扩展 `DATASET_REGISTRY` 以包含所有新增的数据集类型
+    - `[执行中]` 增强 `scan_integrated_datasets` 函数:
+        - `[执行中]` 支持自动识别数据集类型和格式
+        - `[执行中]` 处理多文件数据集的特殊情况
+        - `[执行中]` 提供更详细的数据集元信息
+    - `[已完成 - 2025-05-19 11:10]` 创建 `dataset_manager.py`:
+        - `[已完成 - 2025-05-19 11:10]` 实现 `DatasetManager` 类，提供统一的数据集管理接口
+        - `[已完成 - 2025-05-19 11:10]` 实现数据集版本管理和元数据存储
+        - `[已完成 - 2025-05-19 11:10]` 添加数据集预览和统计信息功能
+        - `[执行中]` 支持数据集分割（训练/验证/测试）
+        - `[执行中]` 支持数据集采样和过滤
+    - `[已完成 - 2025-05-19 11:10]` 实现数据集缓存机制:
+        - `[已完成 - 2025-05-19 11:10]` 优化频繁访问的数据集加载性能
+        - `[已完成 - 2025-05-19 11:10]` 管理缓存大小和生命周期
 - **注意事项**：
-    - `[待执行]` 确保向后兼容性，不破坏现有功能
-    - `[待执行]` 提供清晰的错误信息和日志记录
-    - `[待执行]` 设计灵活的接口，便于未来扩展
+    - `[执行中]` 确保向后兼容性，不破坏现有功能
+    - `[执行中]` 提供清晰的错误信息和日志记录
+    - `[执行中]` 设计灵活的接口，便于未来扩展
 
-#### **任务2.1.5：开发数据集文档和示例** `[待执行]`
+#### **任务2.1.5：开发数据集文档和示例** `[执行中]`
 - **涉及文件**：`docs/datasets/`, `data/examples/`
 - **功能点**：
-    - `[待执行]` 创建详细的数据集文档:
-        - `[待执行]` 编写 `docs/datasets/xpert_format_spec.md`，详细说明 XpertFormat 规范
-        - `[待执行]` 为每种支持的数据集格式创建文档，包括格式说明、示例和使用方法
-        - `[待执行]` 编写数据集转换和自定义数据集创建的教程
-    - `[待执行]` 提供示例数据集:
-        - `[待执行]` 创建 `data/examples/choice_example.jsonl`，展示选择题格式
-        - `[待执行]` 创建 `data/examples/math_example.jsonl`，展示数学问题格式
-        - `[待执行]` 创建 `data/examples/code_example.jsonl`，展示代码生成任务格式
-        - `[待执行]` 创建 `data/examples/multimodal_example.jsonl`，展示多模态任务格式
-    - `[待执行]` 开发数据集可视化工具:
-        - `[待执行]` 实现 `scripts/preview_dataset.py`，用于预览和检查数据集内容
-        - `[待执行]` 支持不同类型数据的适当展示（文本、代码、图像等）
+    - `[执行中]` 创建详细的数据集文档:
+        - `[执行中]` 编写 `docs/datasets/xpert_format_spec.md`，详细说明 XpertFormat 规范
+        - `[执行中]` 为每种支持的数据集格式创建文档，包括格式说明、示例和使用方法
+        - `[执行中]` 编写数据集转换和自定义数据集创建的教程
+    - `[已完成 - 2025-05-19 10:49]` 提供示例数据集:
+        - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/choice_example.jsonl`，展示选择题格式
+        - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/math_example.jsonl`，展示数学问题格式
+        - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/code_example.jsonl`，展示代码生成任务格式
+        - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/multimodal_example.jsonl`，展示多模态任务格式
+    - `[执行中]` 开发数据集可视化工具:
+        - `[执行中]` 实现 `scripts/preview_dataset.py`，用于预览和检查数据集内容
+        - `[执行中]` 支持不同类型数据的适当展示（文本、代码、图像等）
 - **注意事项**：
-    - `[待执行]` 文档应使用中文，并包含足够的代码示例
-    - `[待执行]` 示例数据集应覆盖不同类型和格式
-    - `[待执行]` 确保示例数据的质量和代表性
+    - `[执行中]` 文档应使用中文，并包含足够的代码示例
+    - `[已完成 - 2025-05-19 10:49]` 示例数据集应覆盖不同类型和格式
+    - `[执行中]` 确保示例数据的质量和代表性
 
 #### **任务2.2：评测器基类与初步实现 (`xperteval/core/base_evaluator.py`, `xperteval/evaluators/`)** `[待执行]`
 - **涉及文件**：`xperteval/core/base_evaluator.py`, `xperteval/evaluators/__init__.py`, `xperteval/evaluators/common/__init__.py`, `xperteval/evaluators/common/accuracy.py` (示例)
@@ -410,7 +421,7 @@
 - **功能点**：
     - `[待执行]` 为 `xperteval/config/config_loader.py` 编写单元测试 (`tests/unit/test_config_loader.py`)。
     - `[待执行]` 为 `xperteval/core/api_caller.py` 编写单元测试 (mock HTTP请求)。
-    - `[待执行]` 为 `xperteval/datasets/ms_swift_parser.py` 编写单元测试。
+    - `[待执行]` 为 `xperteval/datasets/xpert_format.py` 编写单元测试。
     - `[待执行]` 为已实现的评测器 (`AccuracyEvaluator`等) 编写单元测试。
     - `[待执行]` 编写集成测试 (`tests/integration/test_full_eval_flow.py`)：覆盖从配置加载到报告生成的完整自动化评测流程 (可使用 mock API 或少量真实调用)。
     - `[待执行]` 编写 `scripts/run_tests.sh` 脚本，用于方便地执行所有测试。

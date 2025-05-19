@@ -11,7 +11,7 @@ import glob
 
 from ..utils import get_logger
 from .base_dataset import BaseDataset
-from .ms_swift_parser import MsSwiftDataset
+from .xpert_format import XpertFormatDataset
 
 # 配置日志
 logger = get_logger(__name__)
@@ -21,7 +21,7 @@ DEFAULT_DATASETS_DIR = Path(__file__).parent.parent.parent / "data" / "integrate
 
 # 数据集类型注册表：映射数据集类型名称到相应的数据集类
 DATASET_REGISTRY = {
-    "ms-swift": MsSwiftDataset,
+    "xpert-format": XpertFormatDataset,
     # 未来可以添加更多数据集类型
 }
 
@@ -96,7 +96,7 @@ def scan_integrated_datasets(base_dir: Optional[Union[str, Path]] = None) -> Dic
         
         dataset_id = dataset_dir.name
         description = "无描述"
-        dataset_type = "ms-swift"  # 默认类型
+        dataset_type = "xpert-format"  # 默认类型
         dataset_file = None
         
         # 查找README.md文件以获取描述
@@ -151,7 +151,7 @@ def scan_integrated_datasets(base_dir: Optional[Union[str, Path]] = None) -> Dic
 def get_dataset(
     dataset_id: Optional[str] = None,
     dataset_path: Optional[str] = None,
-    dataset_type: str = "ms-swift",
+    dataset_type: str = "xpert-format",
     **kwargs
 ) -> BaseDataset:
     """
@@ -164,7 +164,7 @@ def get_dataset(
     Args:
         dataset_id: 已集成数据集的ID，如果指定，将忽略dataset_path和dataset_type
         dataset_path: 数据集文件路径
-        dataset_type: 数据集类型，默认为"ms-swift"
+        dataset_type: 数据集类型，默认为"xpert-format"
         **kwargs: 传递给数据集构造函数的其他参数
     
     Returns:
