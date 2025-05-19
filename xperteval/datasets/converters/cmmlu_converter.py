@@ -351,5 +351,5 @@ def main():
         logger.error("转换失败")
         return 1
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main()) 

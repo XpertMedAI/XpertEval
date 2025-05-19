@@ -1,199 +1,159 @@
 #!/usr/bin/env python
 # coding: utf-8
 """
-数据集格式转换命令行工具
+数据集转换工具
 
-用于将各种格式的数据集转换为XpertFormat格式。
+提供将各种格式的数据集转换为XpertFormat格式的命令行工具。
+这是一个统一的入口点，避免直接使用模块导入方式运行转换器。
+
+用法:
+    # 转换MMLU数据集
+    python scripts/convert_dataset.py mmlu --source data/downloads/mmlu/abstract_algebra --output data/integrated/mmlu/abstract_algebra.jsonl --split test
+    
+    # 转换CMMLU数据集
+    python scripts/convert_dataset.py cmmlu --source data/downloads/cmmlu/cmmlu_v1_0_1/test --output data/integrated/cmmlu/test_all.jsonl
+    
+    # 转换GSM8K数据集
+    python scripts/convert_dataset.py gsm8k --source data/downloads/gsm8k/main --output data/integrated/gsm8k/main_test.jsonl --split test
+    
+    # 转换HumanEval数据集
+    python scripts/convert_dataset.py humaneval --source data/downloads/humaneval/openai_humaneval/test-00000-of-00001.parquet --output data/integrated/humaneval/humaneval.jsonl
 """
 
 import os
 import sys
 import argparse
-import json
 from pathlib import Path
 
-# 添加项目根目录到Python路径
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# 添加项目根目录到路径
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+# 导入转换器
 from xperteval.datasets.converters import (
-    convert_to_xpert_format,
-    batch_convert,
     convert_mmlu_to_xpert,
     convert_cmmlu_to_xpert,
     convert_gsm8k_to_xpert,
-    convert_math_to_xpert,
-    convert_humaneval_to_xpert,
-    convert_ceval_to_xpert,
-    convert_mmbench_to_xpert,
-    convert_llava_bench_to_xpert,
-    convert_seed_bench_to_xpert,
-    convert_mm_vet_to_xpert
+    convert_humaneval_to_xpert
 )
-from xperteval.datasets.converters.format_validator import validate_file, get_format_guidelines
 from xperteval.utils import get_logger
 
 # 配置日志
 logger = get_logger(__name__)
 
-# 支持的数据集类型
-SUPPORTED_DATASET_TYPES = [
-    'mmlu', 'cmmlu', 'gsm8k', 'math', 'humaneval', 'ceval',
-    'mmbench', 'llava_bench', 'seed_bench', 'mm_vet'
-]
-
-def parse_args():
-    """
-    解析命令行参数
+def main():
+    """命令行工具入口函数"""
     
-    Returns:
-        解析后的参数对象
-    """
+    # 创建父解析器
     parser = argparse.ArgumentParser(
-        description='数据集格式转换工具',
-        formatter_class=argparse.RawTextHelpFormatter
+        description='将各种格式的数据集转换为XpertFormat格式',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""示例:
+  # 转换MMLU数据集
+  python scripts/convert_dataset.py mmlu --source data/downloads/mmlu/abstract_algebra --output data/integrated/mmlu/abstract_algebra.jsonl --split test
+  
+  # 转换CMMLU数据集
+  python scripts/convert_dataset.py cmmlu --source data/downloads/cmmlu/cmmlu_v1_0_1/test --output data/integrated/cmmlu/test_all.jsonl
+  
+  # 转换GSM8K数据集
+  python scripts/convert_dataset.py gsm8k --source data/downloads/gsm8k/main --output data/integrated/gsm8k/main_test.jsonl --split test
+  
+  # 转换HumanEval数据集
+  python scripts/convert_dataset.py humaneval --source data/downloads/humaneval/openai_humaneval/test-00000-of-00001.parquet --output data/integrated/humaneval/humaneval.jsonl
+"""
     )
     
-    # 子命令
-    subparsers = parser.add_subparsers(dest='command', help='命令')
+    # 创建子命令解析器
+    subparsers = parser.add_subparsers(dest='dataset_type', help='数据集类型')
     
-    # convert命令
-    convert_parser = subparsers.add_parser('convert', help='转换数据集')
-    convert_parser.add_argument('--input', '-i', required=True, help='输入数据集文件或目录路径')
-    convert_parser.add_argument('--output', '-o', required=True, help='输出XpertFormat文件路径')
-    convert_parser.add_argument('--type', '-t', required=True, choices=SUPPORTED_DATASET_TYPES,
-                              help='数据集类型')
-    convert_parser.add_argument('--media-dir', help='媒体文件目录，用于多模态数据集')
-    convert_parser.add_argument('--split', default='test', help='数据集分割(dev/test)，默认为"test"')
-    convert_parser.add_argument('--language', default='zh', help='语言(en/zh)，默认为"zh"')
-    convert_parser.add_argument('--verify-media', action='store_true', help='验证媒体文件是否存在')
+    # MMLU解析器
+    mmlu_parser = subparsers.add_parser('mmlu', help='转换MMLU数据集')
+    mmlu_parser.add_argument('--source', required=True, help='源数据目录或文件路径')
+    mmlu_parser.add_argument('--output', required=True, help='输出文件路径')
+    mmlu_parser.add_argument('--split', default='test', help='数据集分割(test/validation)')
+    mmlu_parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
+    mmlu_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
-    # batch命令
-    batch_parser = subparsers.add_parser('batch', help='批量转换数据集')
-    batch_parser.add_argument('--input-dir', '-i', required=True, help='输入目录')
-    batch_parser.add_argument('--output-dir', '-o', required=True, help='输出目录')
-    batch_parser.add_argument('--type', '-t', required=True, choices=SUPPORTED_DATASET_TYPES,
-                            help='数据集类型')
-    batch_parser.add_argument('--pattern', default='*', help='文件匹配模式，默认为"*"')
-    batch_parser.add_argument('--recursive', '-r', action='store_true', help='递归处理子目录')
-    batch_parser.add_argument('--media-dir', help='媒体文件目录，用于多模态数据集')
-    batch_parser.add_argument('--split', default='test', help='数据集分割(dev/test)，默认为"test"')
-    batch_parser.add_argument('--language', default='zh', help='语言(en/zh)，默认为"zh"')
-    batch_parser.add_argument('--verify-media', action='store_true', help='验证媒体文件是否存在')
+    # CMMLU解析器
+    cmmlu_parser = subparsers.add_parser('cmmlu', help='转换CMMLU数据集')
+    cmmlu_parser.add_argument('--source', required=True, help='源数据目录或文件路径')
+    cmmlu_parser.add_argument('--output', required=True, help='输出文件路径')
+    cmmlu_parser.add_argument('--split', default='test', help='数据集分割(test/dev)')
+    cmmlu_parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
+    cmmlu_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
-    # validate命令
-    validate_parser = subparsers.add_parser('validate', help='验证XpertFormat格式')
-    validate_parser.add_argument('--input', '-i', required=True, help='输入文件路径')
-    validate_parser.add_argument('--fix', '-f', action='store_true', help='尝试修复并保存')
+    # GSM8K解析器
+    gsm8k_parser = subparsers.add_parser('gsm8k', help='转换GSM8K数据集')
+    gsm8k_parser.add_argument('--source', required=True, help='源数据目录或文件路径')
+    gsm8k_parser.add_argument('--output', required=True, help='输出文件路径')
+    gsm8k_parser.add_argument('--split', default='test', help='数据集分割(test/train)')
+    gsm8k_parser.add_argument('--version', help='数据集版本(main/socratic)，如果指定则只转换该版本')
+    gsm8k_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
-    # guidelines命令
-    guidelines_parser = subparsers.add_parser('guidelines', help='显示XpertFormat格式指南')
+    # HumanEval解析器
+    humaneval_parser = subparsers.add_parser('humaneval', help='转换HumanEval数据集')
+    humaneval_parser.add_argument('--source', required=True, help='源数据文件路径')
+    humaneval_parser.add_argument('--output', required=True, help='输出文件路径')
+    humaneval_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
-    return parser.parse_args()
-
-def main():
-    """
-    主函数
-    """
-    args = parse_args()
+    # 解析命令行参数
+    args = parser.parse_args()
     
-    if args.command == 'convert':
-        # 转换单个数据集
-        kwargs = {
-            'split': args.split,
-            'language': args.language
+    # 如果没有指定数据集类型，显示帮助信息
+    if not args.dataset_type:
+        parser.print_help()
+        return 1
+    
+    # 检查源路径是否存在
+    source_path = Path(args.source)
+    if not source_path.exists():
+        logger.error(f"源路径不存在: {source_path}")
+        return 1
+    
+    # 根据数据集类型选择不同的转换方法
+    success = False
+    validate = not getattr(args, 'no_validate', False)
+    
+    if args.dataset_type == 'mmlu':
+        params = {
+            "split": args.split,
+            "validate": validate
         }
-        
-        # 添加媒体目录参数（如果提供）
-        if args.media_dir:
-            if args.type in ['mmbench', 'llava_bench', 'mm_vet']:
-                kwargs['image_dir'] = args.media_dir
-            elif args.type == 'seed_bench':
-                kwargs['media_dir'] = args.media_dir
-        
-        # 添加验证媒体文件参数
-        if args.verify_media:
-            kwargs['verify_media'] = True
-        
-        # 执行转换
-        success = convert_to_xpert_format(
-            args.input,
-            args.output,
-            args.type,
-            **kwargs
-        )
-        
-        if success:
-            logger.info(f"转换成功: {args.input} -> {args.output}")
-            sys.exit(0)
-        else:
-            logger.error(f"转换失败: {args.input}")
-            sys.exit(1)
+        if args.subject:
+            params["subject"] = args.subject
+        logger.info(f"转换MMLU数据集: {args.source}")
+        success = convert_mmlu_to_xpert(args.source, args.output, **params)
     
-    elif args.command == 'batch':
-        # 批量转换数据集
-        kwargs = {
-            'split': args.split,
-            'language': args.language
+    elif args.dataset_type == 'cmmlu':
+        params = {
+            "split": args.split,
+            "validate": validate
         }
-        
-        # 添加媒体目录参数（如果提供）
-        if args.media_dir:
-            if args.type in ['mmbench', 'llava_bench', 'mm_vet']:
-                kwargs['image_dir'] = args.media_dir
-            elif args.type == 'seed_bench':
-                kwargs['media_dir'] = args.media_dir
-        
-        # 添加验证媒体文件参数
-        if args.verify_media:
-            kwargs['verify_media'] = True
-        
-        # 执行批量转换
-        results = batch_convert(
-            args.input_dir,
-            args.output_dir,
-            args.type,
-            args.pattern,
-            args.recursive,
-            **kwargs
-        )
-        
-        # 输出统计信息
-        success_count = sum(1 for success in results.values() if success)
-        total_count = len(results)
-        
-        logger.info(f"批量转换完成: {success_count}/{total_count} 个文件成功转换")
-        
-        if success_count == total_count:
-            sys.exit(0)
-        else:
-            sys.exit(1)
+        if args.subject:
+            params["subject"] = args.subject
+        logger.info(f"转换CMMLU数据集: {args.source}")
+        success = convert_cmmlu_to_xpert(args.source, args.output, **params)
     
-    elif args.command == 'validate':
-        # 验证XpertFormat格式
-        valid, errors, fixed_file_path = validate_file(args.input, args.fix)
-        
-        if valid:
-            logger.info(f"验证通过: {args.input}")
-            sys.exit(0)
-        else:
-            logger.error(f"验证失败: {args.input}")
-            for error in errors:
-                logger.error(f"  - {error}")
-            
-            if fixed_file_path:
-                logger.info(f"已修复并保存到: {fixed_file_path}")
-            
-            sys.exit(1)
+    elif args.dataset_type == 'gsm8k':
+        params = {
+            "split": args.split,
+            "validate": validate
+        }
+        if args.version:
+            params["version"] = args.version
+        logger.info(f"转换GSM8K数据集: {args.source}")
+        success = convert_gsm8k_to_xpert(args.source, args.output, **params)
     
-    elif args.command == 'guidelines':
-        # 显示XpertFormat格式指南
-        print(get_format_guidelines())
-        sys.exit(0)
+    elif args.dataset_type == 'humaneval':
+        logger.info(f"转换HumanEval数据集: {args.source}")
+        success = convert_humaneval_to_xpert(args.source, args.output, validate=validate)
     
+    # 输出结果
+    if success:
+        logger.info(f"转换完成，结果保存到: {args.output}")
+        return 0
     else:
-        # 未指定命令，显示帮助信息
-        parse_args.__globals__['parser'].print_help()
-        sys.exit(1)
+        logger.error("转换失败")
+        return 1
 
-if __name__ == '__main__':
-    main() 
+if __name__ == "__main__":
+    sys.exit(main()) 
