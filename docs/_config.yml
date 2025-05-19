@@ -10,6 +10,12 @@ aux_links:
 # 颜色设置
 color_scheme: light
 
+# 启用右侧目录
+toc:
+  enabled: true
+  h_min: 2
+  h_max: 3
+
 # 导航设置
 nav_external_links:
   - title: XpertEval on GitHub

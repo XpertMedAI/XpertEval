@@ -3,6 +3,7 @@ layout: default
 title: 数据集转换工具
 parent: 数据集文档
 nav_order: 2
+toc: true
 ---
 
 # 数据集转换工具

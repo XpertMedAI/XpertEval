@@ -1,8 +1,9 @@
- ---
+---
 layout: default
 title: 扩展指南
 parent: 开发者指南
 nav_order: 2
+toc: true
 ---
 
 # 扩展指南

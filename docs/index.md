@@ -3,6 +3,7 @@ layout: default
 title: 首页
 nav_order: 1
 permalink: /
+toc: true
 ---
 
 # XpertEval - 全模态大模型一站式评测框架

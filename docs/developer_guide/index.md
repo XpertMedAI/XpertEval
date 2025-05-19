@@ -1,9 +1,10 @@
- ---
+---
 layout: default
 title: 开发者指南
 nav_order: 5
 has_children: true
 permalink: /developer_guide
+toc: true
 ---
 
 # XpertEval 开发者指南
@@ -63,7 +64,7 @@ cd XpertEval
 
 ```bash
 # 使用 conda 创建环境
-conda create -n xperteval-dev python=3.8
+conda create -n xperteval-dev -y python=3.10
 conda activate xperteval-dev
 
 # 安装依赖

@@ -1,8 +1,9 @@
- ---
+---
 layout: default
 title: WebUI 使用说明
 parent: 用户手册
 nav_order: 2
+toc: true
 ---
 
 # WebUI 使用说明

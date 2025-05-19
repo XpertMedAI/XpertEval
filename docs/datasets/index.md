@@ -4,6 +4,7 @@ title: 数据集文档
 nav_order: 3
 has_children: true
 permalink: /datasets
+toc: true
 ---
 
 # XpertEval 数据集文档

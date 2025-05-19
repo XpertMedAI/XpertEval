@@ -2,25 +2,16 @@
 layout: default
 title: 快速开始
 nav_order: 2
+toc: true
 ---
 
 # 快速开始
-{: .no_toc }
-
-<details open markdown="block">
-  <summary>
-    目录
-  </summary>
-  {: .text-delta }
-1. TOC
-{:toc}
-</details>
 
 ## 安装
 
 ### 系统要求
 
-- Python 3.8+
+- Python 3.10
 - pip 或 conda 包管理器
 - Git (可选，用于克隆仓库)
 

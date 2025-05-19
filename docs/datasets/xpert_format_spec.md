@@ -3,6 +3,7 @@ layout: default
 title: XpertFormat 规范
 parent: 数据集文档
 nav_order: 1
+toc: true
 ---
 
 # XpertFormat 数据集格式规范

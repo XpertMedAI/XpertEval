@@ -1,8 +1,9 @@
- ---
+---
 layout: default
 title: 配置指南
 parent: 用户手册
 nav_order: 1
+toc: true
 ---
 
 # 配置指南

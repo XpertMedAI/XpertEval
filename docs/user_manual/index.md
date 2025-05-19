@@ -1,9 +1,10 @@
- ---
+---
 layout: default
 title: 用户手册
 nav_order: 4
 has_children: true
 permalink: /user_manual
+toc: true
 ---
 
 # XpertEval 用户手册

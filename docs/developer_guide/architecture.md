@@ -1,8 +1,9 @@
- ---
+---
 layout: default
 title: 架构设计
 parent: 开发者指南
 nav_order: 1
+toc: true
 ---
 
 # 架构设计
