@@ -28,6 +28,103 @@ from xperteval.utils import get_logger
 # 配置日志
 logger = get_logger(__name__)
 
+def test_dataset_download():
+    """测试数据集下载"""
+    logger.info("=== 测试数据集下载 ===")
+    logger.info(f"已注册的数据集类型: {list(DATASET_REGISTRY.keys())}")
+    
+    # 创建数据集管理器
+    manager = DatasetManager()
+    
+    # 列出所有可用的数据集
+    datasets = manager.list_available_datasets()
+    if not datasets:
+        logger.warning("没有可用的数据集")
+        return False
+    logger.info(f"可用的数据集数量: {len(datasets)}")
+    
+    # 打印所有可用数据集
+    logger.info("可用的数据集列表:")
+    for i, dataset in enumerate(datasets):
+        status = dataset.get('local_status', '未知')
+        logger.info(f"  [{i}] {dataset['id']} - {dataset['name']} ({status})")
+    
+    # 尝试下载一个数据集作为示例
+    # 选择一个数据集进行测试 - 优先选择未下载的数据集
+    dataset_id = None
+    for ds in datasets:
+        if ds.get('local_status') == '未下载' and (
+            manager.get_dataset_info(ds['id']).get('huggingface_url') or 
+            manager.get_dataset_info(ds['id']).get('modelscope_url')
+        ):
+            dataset_id = ds['id']
+            break
+    
+    # 如果没有未下载的数据集，选择第一个
+    if not dataset_id:
+        dataset_id = datasets[0]['id'] if datasets else None
+    
+    # 如果没有数据集，返回失败
+    if not dataset_id:
+        logger.error("没有可用的数据集进行下载测试")
+        return False
+    
+    logger.info(f"选择数据集 {dataset_id} 进行下载测试")
+    
+    # 检查当前状态
+    info = manager.get_dataset_info(dataset_id)
+    if not info:
+        logger.error(f"获取数据集 {dataset_id} 信息失败")
+        return False
+    
+    local_status = info.get('local_status')
+    logger.info(f"数据集 {dataset_id} 当前状态: {local_status}")
+    
+    # 定义是否强制重新下载
+    force_download = False
+    if local_status in ['已下载', '已转换']:
+        logger.info(f"数据集 {dataset_id} 已经下载过")
+        # 询问是否强制重新下载
+        forced_download_options = ["y", "n", "yes", "no"]
+        if sys.stderr.isatty():  # 如果是交互式终端
+            choice = input(f"是否强制重新下载数据集 {dataset_id}? (y/n): ").lower()
+            force_download = choice in ["y", "yes"]
+        
+        if force_download:
+            logger.info(f"将强制重新下载数据集 {dataset_id}")
+        else:
+            logger.info(f"跳过数据集 {dataset_id} 的下载")
+            success = True
+    else:
+        # 尝试下载数据集
+        logger.info(f"开始下载数据集 {dataset_id}...")
+        success = manager.download_dataset(dataset_id, force=force_download)
+        
+        if success:
+            logger.info(f"数据集 {dataset_id} 下载成功")
+            
+            # 尝试下载后的状态
+            new_info = manager.get_dataset_info(dataset_id)
+            new_status = new_info.get('local_status') if new_info else '未知'
+            logger.info(f"下载后数据集 {dataset_id} 状态: {new_status}")
+        else:
+            logger.error(f"数据集 {dataset_id} 下载失败")
+    
+    # 列出所有支持的数据集类型
+    available_types = list(DATASET_REGISTRY.keys())
+    logger.info(f"当前支持的数据集类型: {available_types}")
+    
+    # 可选：测试转换功能
+    if success and local_status == '已下载':
+        logger.info(f"尝试将数据集 {dataset_id} 转换为XpertFormat格式...")
+        convert_success = manager.convert_dataset(dataset_id)
+        if convert_success:
+            logger.info(f"数据集 {dataset_id} 转换成功")
+        else:
+            logger.warning(f"数据集 {dataset_id} 转换失败")
+    
+    return success
+
 def test_dataset_registry():
     """测试数据集注册表"""
     logger.info("=== 测试数据集注册表 ===")
@@ -173,6 +270,7 @@ def main():
     """主函数"""
     parser = argparse.ArgumentParser(description='测试数据集管理器')
     parser.add_argument('--test-all', action='store_true', help='运行所有测试')
+    parser.add_argument('--test-download', action='store_true', help='测试数据集下载')
     parser.add_argument('--test-registry', action='store_true', help='测试数据集注册表')
     parser.add_argument('--test-scan', action='store_true', help='测试扫描集成数据集')
     parser.add_argument('--test-manager', action='store_true', help='测试数据集管理器')
@@ -184,12 +282,15 @@ def main():
     args = parser.parse_args()
     
     # 如果没有指定任何测试，则运行所有测试
-    if not (args.test_registry or args.test_scan or args.test_manager or 
+    if not (args.test_download or args.test_registry or args.test_scan or args.test_manager or 
             args.test_split or args.test_sample_filter):
         args.test_all = True
     
     # 运行测试
     results = {}
+
+    if args.test_all or args.test_download:
+        results['download'] = test_dataset_download()
     
     if args.test_all or args.test_registry:
         results['registry'] = test_dataset_registry()

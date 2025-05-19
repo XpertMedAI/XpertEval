@@ -32,6 +32,12 @@ toc: true
 git clone https://github.com/XpertMedAI/XpertEval.git
 cd xperteval
 
+# 创建虚拟环境
+conda create -n xperteval -y python=3.10
+
+# 激活虚拟环境
+conda activate xperteval
+
 # 安装依赖
 pip install -r requirements.txt
 

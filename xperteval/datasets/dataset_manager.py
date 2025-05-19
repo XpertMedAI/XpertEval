@@ -13,6 +13,8 @@ from typing import Dict, Any, List, Union, Optional, Tuple, Callable
 import subprocess
 import requests
 from tqdm import tqdm
+import datetime
+import sys
 
 from ..utils import get_logger
 from .base_dataset import BaseDataset
@@ -181,27 +183,125 @@ class DatasetManager:
         Returns:
             布尔值，表示下载是否成功
         """
-        # 这里需要实现具体的Hugging Face数据集下载逻辑
-        # 可以使用datasets库或直接使用HTTP请求
         logger.info(f"尝试从Hugging Face下载数据集 {dataset_id}...")
         
         try:
-            # 这里是一个简化的实现，实际应用中可能需要更复杂的逻辑
-            # 例如使用datasets库: datasets.load_dataset(dataset_id)
+            # 检查是否安装了datasets库
+            try:
+                import datasets
+                from datasets import load_dataset
+            except ImportError:
+                logger.error("未安装datasets库，请使用 'pip install datasets' 安装")
+                logger.info("正在尝试安装datasets库...")
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "datasets"])
+                import datasets
+                from datasets import load_dataset
+                logger.info("datasets库安装成功")
             
-            # 模拟下载成功
-            # 实际实现时，这里应该是真正的下载代码
+            # 获取Hugging Face数据集路径
+            hf_path = dataset_info.get("huggingface_url")
+            if not hf_path:
+                logger.error(f"数据集 {dataset_id} 未配置Hugging Face URL")
+                return False
+            
+            # 从URL中提取数据集名称
+            # 例如从 https://huggingface.co/datasets/cais/mmlu 提取 cais/mmlu
+            hf_dataset_name = hf_path.replace("https://huggingface.co/datasets/", "")
+            
+            logger.info(f"正在从Hugging Face下载数据集: {hf_dataset_name}")
+            
+            # 记录下载信息
+            download_info = {
+                "source": "huggingface",
+                "url": hf_path,
+                "downloaded_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
             with open(target_dir / "download_info.json", 'w', encoding='utf-8') as f:
-                json.dump({
-                    "source": "huggingface",
-                    "url": dataset_info.get("huggingface_url"),
-                    "downloaded_at": "2025-05-19"
-                }, f, ensure_ascii=False, indent=2)
+                json.dump(download_info, f, ensure_ascii=False, indent=2)
             
-            # 创建一个示例文件，表示下载成功
-            # 实际下载时，这里应该保存真正的数据集文件
-            with open(target_dir / "example.txt", 'w', encoding='utf-8') as f:
-                f.write(f"这是从Hugging Face下载的{dataset_id}数据集示例文件")
+            # 下载数据集
+            # 使用本地缓存目录，避免默认缓存位置可能的权限问题
+            cache_dir = self.project_root / "data" / "cache" / "huggingface"
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            
+            # 下载所有可用的配置和分割
+            try:
+                # 首先尝试获取数据集信息，看支持哪些配置和分割
+                dataset_info_obj = datasets.get_dataset_infos(hf_dataset_name)
+                
+                if dataset_info_obj:
+                    # 遍历所有配置
+                    for config_name, config_info in dataset_info_obj.items():
+                        logger.info(f"下载配置: {config_name}")
+                        
+                        # 获取此配置下的所有分割
+                        splits = config_info.splits.keys()
+                        
+                        for split in splits:
+                            logger.info(f"下载分割: {split}")
+                            
+                            # 下载特定配置和分割的数据集
+                            ds = load_dataset(
+                                hf_dataset_name, 
+                                name=config_name, 
+                                split=split,
+                                cache_dir=str(cache_dir)
+                            )
+                            
+                            # 保存为jsonl格式
+                            output_file = target_dir / f"{config_name}_{split}.jsonl"
+                            ds.to_json(str(output_file))
+                            
+                            logger.info(f"保存数据集到: {output_file}, 样本数: {len(ds)}")
+                else:
+                    # 如果无法获取详细信息，直接尝试下载
+                    logger.info("无法获取数据集详细信息，尝试直接下载")
+                    ds = load_dataset(hf_dataset_name, cache_dir=str(cache_dir))
+                    
+                    # 保存所有分割
+                    for split_name, split_ds in ds.items():
+                        output_file = target_dir / f"{split_name}.jsonl"
+                        split_ds.to_json(str(output_file))
+                        logger.info(f"保存数据集到: {output_file}, 样本数: {len(split_ds)}")
+            
+            except Exception as e:
+                logger.warning(f"尝试获取数据集信息失败，使用简单方式下载: {e}")
+                
+                # 简单方式：直接尝试下载主要分割
+                common_splits = ["train", "validation", "test", "dev"]
+                any_success = False
+                
+                for split in common_splits:
+                    try:
+                        ds = load_dataset(hf_dataset_name, split=split, cache_dir=str(cache_dir))
+                        output_file = target_dir / f"{split}.jsonl"
+                        ds.to_json(str(output_file))
+                        logger.info(f"保存数据集到: {output_file}, 样本数: {len(ds)}")
+                        any_success = True
+                    except Exception as split_e:
+                        logger.warning(f"下载分割 {split} 失败: {split_e}")
+                
+                if not any_success:
+                    # 最简单的方式：无分割直接下载
+                    try:
+                        ds = load_dataset(hf_dataset_name, cache_dir=str(cache_dir))
+                        
+                        # 保存主要数据
+                        if isinstance(ds, dict):
+                            for split_name, split_ds in ds.items():
+                                output_file = target_dir / f"{split_name}.jsonl"
+                                split_ds.to_json(str(output_file))
+                                logger.info(f"保存数据集到: {output_file}, 样本数: {len(split_ds)}")
+                                any_success = True
+                        else:
+                            output_file = target_dir / "data.jsonl"
+                            ds.to_json(str(output_file))
+                            logger.info(f"保存数据集到: {output_file}, 样本数: {len(ds)}")
+                            any_success = True
+                    except Exception as all_e:
+                        logger.error(f"所有下载方式均失败: {all_e}")
+                        return False
             
             return True
             
@@ -222,27 +322,198 @@ class DatasetManager:
         Returns:
             布尔值，表示下载是否成功
         """
-        # 这里需要实现具体的ModelScope数据集下载逻辑
         logger.info(f"尝试从ModelScope下载数据集 {dataset_id}...")
         
         try:
-            # 这里是一个简化的实现，实际应用中需要使用ModelScope SDK
-            # 模拟下载成功
-            with open(target_dir / "download_info.json", 'w', encoding='utf-8') as f:
-                json.dump({
-                    "source": "modelscope",
-                    "url": dataset_info.get("modelscope_url"),
-                    "downloaded_at": "2025-05-19"
-                }, f, ensure_ascii=False, indent=2)
+            # 检查是否安装了modelscope库
+            try:
+                from modelscope.msdatasets import MsDataset
+            except ImportError:
+                logger.error("未安装modelscope库，请使用 'pip install modelscope' 安装")
+                logger.info("正在尝试安装modelscope库...")
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "modelscope"])
+                # 再次导入
+                from modelscope.msdatasets import MsDataset
+                logger.info("modelscope库安装成功")
             
-            # 创建一个示例文件，表示下载成功
-            with open(target_dir / "example.txt", 'w', encoding='utf-8') as f:
-                f.write(f"这是从ModelScope下载的{dataset_id}数据集示例文件")
+            # 获取ModelScope数据集路径
+            ms_path = dataset_info.get("modelscope_url")
+            if not ms_path:
+                logger.error(f"数据集 {dataset_id} 未配置ModelScope URL")
+                return False
+            
+            # 从URL中提取数据集名称
+            # 例如从 https://modelscope.cn/datasets/modelscope/ceval 提取 modelscope/ceval
+            if "modelscope.cn/datasets/" in ms_path:
+                ms_dataset_name = ms_path.split("modelscope.cn/datasets/")[1]
+            else:
+                # 如果URL格式不是标准格式，可能直接是数据集名称
+                ms_dataset_name = ms_path
+            
+            logger.info(f"正在从ModelScope下载数据集: {ms_dataset_name}")
+            
+            # 记录下载信息
+            download_info = {
+                "source": "modelscope",
+                "url": ms_path,
+                "downloaded_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
+            
+            with open(target_dir / "download_info.json", 'w', encoding='utf-8') as f:
+                json.dump(download_info, f, ensure_ascii=False, indent=2)
+            
+            # 设置下载目录
+            cache_dir = self.project_root / "data" / "cache" / "modelscope"
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            
+            # 下载数据集
+            # MsDataset会自动处理下载和缓存
+            try:
+                # 尝试直接下载数据集
+                ms_dataset = MsDataset.load(
+                    dataset_name=ms_dataset_name,
+                    root_dir=str(cache_dir)
+                )
+                
+                # 检查数据集类型和结构
+                if hasattr(ms_dataset, 'keys') and callable(ms_dataset.keys):
+                    # 处理字典类型数据集
+                    for split_name in ms_dataset.keys():
+                        split_data = ms_dataset[split_name]
+                        logger.info(f"获取到分割: {split_name}, 类型: {type(split_data)}")
+                        
+                        # 保存数据
+                        if hasattr(split_data, 'to_pandas'):
+                            # 转换为pandas DataFrame然后保存为jsonl
+                            df = split_data.to_pandas()
+                            output_file = target_dir / f"{split_name}.jsonl"
+                            df.to_json(str(output_file), orient='records', lines=True, force_ascii=False)
+                            logger.info(f"保存数据集到: {output_file}, 样本数: {len(df)}")
+                        elif hasattr(split_data, 'to_json'):
+                            # 使用内置的to_json方法保存
+                            output_file = target_dir / f"{split_name}.jsonl"
+                            split_data.to_json(str(output_file))
+                            logger.info(f"保存数据集到: {output_file}")
+                        else:
+                            # 尝试自定义保存方法
+                            self._save_modelscope_data(split_data, target_dir / f"{split_name}.jsonl")
+                else:
+                    # 处理单一数据集
+                    logger.info(f"获取到单一数据集，类型: {type(ms_dataset)}")
+                    
+                    # 保存数据
+                    if hasattr(ms_dataset, 'to_pandas'):
+                        # 转换为pandas DataFrame然后保存为jsonl
+                        df = ms_dataset.to_pandas()
+                        output_file = target_dir / "data.jsonl"
+                        df.to_json(str(output_file), orient='records', lines=True, force_ascii=False)
+                        logger.info(f"保存数据集到: {output_file}, 样本数: {len(df)}")
+                    elif hasattr(ms_dataset, 'to_json'):
+                        # 使用内置的to_json方法保存
+                        output_file = target_dir / "data.jsonl"
+                        ms_dataset.to_json(str(output_file))
+                        logger.info(f"保存数据集到: {output_file}")
+                    else:
+                        # 尝试自定义保存方法
+                        self._save_modelscope_data(ms_dataset, target_dir / "data.jsonl")
+                
+            except Exception as e:
+                logger.error(f"从ModelScope下载数据集失败: {e}")
+                logger.info("尝试下载预处理或者特定拆分的数据集...")
+                
+                # 尝试常见的分割名称
+                splits = ["train", "dev", "validation", "test"]
+                any_success = False
+                
+                for split in splits:
+                    try:
+                        ms_split = MsDataset.load(
+                            dataset_name=ms_dataset_name,
+                            split=split,
+                            root_dir=str(cache_dir)
+                        )
+                        
+                        # 保存数据
+                        if hasattr(ms_split, 'to_pandas'):
+                            # 转换为pandas DataFrame然后保存为jsonl
+                            df = ms_split.to_pandas()
+                            output_file = target_dir / f"{split}.jsonl"
+                            df.to_json(str(output_file), orient='records', lines=True, force_ascii=False)
+                            logger.info(f"保存数据集到: {output_file}, 样本数: {len(df)}")
+                            any_success = True
+                        elif hasattr(ms_split, 'to_json'):
+                            # 使用内置的to_json方法保存
+                            output_file = target_dir / f"{split}.jsonl"
+                            ms_split.to_json(str(output_file))
+                            logger.info(f"保存数据集到: {output_file}")
+                            any_success = True
+                        else:
+                            # 尝试自定义保存方法
+                            any_success = self._save_modelscope_data(ms_split, target_dir / f"{split}.jsonl")
+                            
+                    except Exception as split_e:
+                        logger.warning(f"下载分割 {split} 失败: {split_e}")
+                
+                if not any_success:
+                    logger.error("所有下载方式均失败")
+                    return False
             
             return True
             
         except Exception as e:
             logger.error(f"从ModelScope下载数据集 {dataset_id} 失败: {e}")
+            return False
+    
+    def _save_modelscope_data(self, data, output_path: Path) -> bool:
+        """
+        保存ModelScope数据集的自定义辅助方法
+        
+        Args:
+            data: ModelScope数据集对象
+            output_path: 输出文件路径
+            
+        Returns:
+            布尔值，表示保存是否成功
+        """
+        try:
+            import pandas as pd
+            import numpy as np
+            
+            # 尝试解析不同格式的数据
+            if hasattr(data, '__iter__') and not isinstance(data, str):
+                # 可迭代对象，尝试将每个项目转换为字典
+                rows = []
+                for item in data:
+                    if isinstance(item, dict):
+                        rows.append(item)
+                    elif hasattr(item, '__dict__'):
+                        rows.append(item.__dict__)
+                    else:
+                        rows.append({"value": str(item)})
+                
+                # 将行列表转换为DataFrame然后保存
+                if rows:
+                    df = pd.DataFrame(rows)
+                    df.to_json(str(output_path), orient='records', lines=True, force_ascii=False)
+                    logger.info(f"保存数据集到: {output_path}, 样本数: {len(df)}")
+                    return True
+            
+            # 尝试获取data的属性
+            elif hasattr(data, '__dict__'):
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    json.dump(data.__dict__, f, ensure_ascii=False, default=lambda x: str(x) if isinstance(x, (np.ndarray, pd.DataFrame)) else x)
+                logger.info(f"保存数据集到: {output_path}")
+                return True
+            
+            # 其他类型，尝试直接字符串化
+            else:
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(str(data))
+                logger.info(f"保存数据集字符串表示到: {output_path}")
+                return True
+                
+        except Exception as e:
+            logger.error(f"保存ModelScope数据失败: {e}")
             return False
     
     def convert_dataset(self, dataset_id: str, force: bool = False) -> bool:
