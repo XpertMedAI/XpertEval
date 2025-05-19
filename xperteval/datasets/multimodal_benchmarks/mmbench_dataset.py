@@ -138,6 +138,11 @@ class MMBenchDataset(BaseDataset):
             
         Returns:
             解析后的数据列表
+            
+        Raises:
+            FileNotFoundError: 文件不存在
+            json.JSONDecodeError: JSON解析错误
+            ValueError: 数据格式错误
         """
         data = []
         
@@ -146,40 +151,61 @@ class MMBenchDataset(BaseDataset):
             if file_path.suffix.lower() == '.jsonl':
                 # JSONL格式，逐行解析
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    for line in f:
+                    for line_num, line in enumerate(f, 1):
                         try:
                             sample = json.loads(line.strip())
                             xpert_sample = self._convert_sample(sample)
                             if xpert_sample:
                                 data.append(xpert_sample)
-                        except json.JSONDecodeError:
-                            logger.warning(f"跳过无效的JSON行: {line}")
+                        except json.JSONDecodeError as e:
+                            logger.error(f"第{line_num}行JSON解析错误: {e}")
+                            continue
+                        except ValueError as e:
+                            logger.error(f"第{line_num}行数据格式错误: {e}")
+                            continue
             else:
                 # JSON格式，整体解析
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    json_data = json.load(f)
-                    
-                    # 判断是否为列表
-                    if isinstance(json_data, list):
-                        for sample in json_data:
-                            xpert_sample = self._convert_sample(sample)
-                            if xpert_sample:
-                                data.append(xpert_sample)
-                    else:
-                        # 可能是字典，包含数据列表
-                        for key, items in json_data.items():
-                            if isinstance(items, list):
-                                for sample in items:
+                    try:
+                        json_data = json.load(f)
+                        
+                        # 判断是否为列表
+                        if isinstance(json_data, list):
+                            for idx, sample in enumerate(json_data, 1):
+                                try:
                                     xpert_sample = self._convert_sample(sample)
                                     if xpert_sample:
                                         data.append(xpert_sample)
+                                except ValueError as e:
+                                    logger.error(f"第{idx}个样本数据格式错误: {e}")
+                                    continue
+                        else:
+                            # 可能是字典，包含数据列表
+                            for key, items in json_data.items():
+                                if isinstance(items, list):
+                                    for idx, sample in enumerate(items, 1):
+                                        try:
+                                            xpert_sample = self._convert_sample(sample)
+                                            if xpert_sample:
+                                                data.append(xpert_sample)
+                                        except ValueError as e:
+                                            logger.error(f"键'{key}'的第{idx}个样本数据格式错误: {e}")
+                                            continue
+                    except json.JSONDecodeError as e:
+                        logger.error(f"JSON文件解析错误: {e}")
+                        raise
             
-            logger.info(f"从 {file_path} 加载了 {len(data)} 个样本")
+            if not data:
+                logger.warning(f"文件 {file_path} 中没有有效的样本数据")
+            
             return data
             
+        except FileNotFoundError:
+            logger.error(f"文件不存在: {file_path}")
+            raise
         except Exception as e:
-            logger.error(f"解析文件 {file_path} 失败: {e}")
-            return []
+            logger.error(f"解析文件 {file_path} 时发生未知错误: {e}")
+            raise
     
     def _convert_sample(self, sample: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """

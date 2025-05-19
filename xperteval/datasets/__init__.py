@@ -28,6 +28,20 @@ from .multimodal_benchmarks import (
     SEEDBenchDataset,
     MMVetDataset
 )
+from .converters import (
+    convert_to_xpert_format,
+    convert_mmlu_to_xpert,
+    convert_cmmlu_to_xpert,
+    convert_gsm8k_to_xpert,
+    convert_math_to_xpert,
+    convert_humaneval_to_xpert,
+    convert_ceval_to_xpert,
+    convert_mmbench_to_xpert,
+    convert_llava_bench_to_xpert,
+    convert_seed_bench_to_xpert,
+    convert_mm_vet_to_xpert,
+    batch_convert
+)
 
 __all__ = [
     'BaseDataset',
@@ -50,5 +64,19 @@ __all__ = [
     'MMBenchDataset',
     'LLaVABenchDataset',
     'SEEDBenchDataset',
-    'MMVetDataset'
+    'MMVetDataset',
+    
+    # Converters
+    'convert_to_xpert_format',
+    'convert_mmlu_to_xpert',
+    'convert_cmmlu_to_xpert',
+    'convert_gsm8k_to_xpert',
+    'convert_math_to_xpert',
+    'convert_humaneval_to_xpert',
+    'convert_ceval_to_xpert',
+    'convert_mmbench_to_xpert',
+    'convert_llava_bench_to_xpert',
+    'convert_seed_bench_to_xpert',
+    'convert_mm_vet_to_xpert',
+    'batch_convert'
 ] 
