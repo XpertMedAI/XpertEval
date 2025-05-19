@@ -54,4 +54,8 @@ htmlcov/
 
 # 数据库
 *.sqlite
-*.db 
+*.db
+
+# 数据
+data/downloads/
+data/integrated/
