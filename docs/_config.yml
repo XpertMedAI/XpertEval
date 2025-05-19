@@ -43,10 +43,11 @@ kramdown:
 # 页脚设置
 footer_content: "Copyright &copy; 2025 XpertEval Team. 基于 <a href=\"https://github.com/pmarsceill/just-the-docs\">Just the Docs</a> 主题."
 
-# 自定义CSS
+# 自定义CSS和JS
 head_scripts:
   - url: https://cdn.jsdelivr.net/npm/mermaid@8.13.3/dist/mermaid.min.js
     crossorigin: anonymous
+  - url: /assets/js/toc.js
 
 # 自定义样式
 callouts:
