@@ -4,7 +4,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/XpertMedAI/XpertEval.svg?style=social&label=Star&maxAge=2592000)](https://github.com/XpertMedAI/XpertEval/stargazers/)
 [![GitHub Forks](https://img.shields.io/github/forks/XpertMedAI/XpertEval.svg?style=social&label=Fork&maxAge=2592000)](https://github.com/XpertMedAI/XpertEval/network/members)
 
-**项目语言: 中文** | **作者: rookielittleblack** | **GitHub: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval)**
+**项目语言: 中文** | **作者: [rookielittleblack](https://github.com/rookie-littleblack)** | **GitHub: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval)**
 
 ---
 
@@ -30,7 +30,7 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
 - **专业领域扩展**：首期重点支持中医药领域，未来可方便地扩展至其他专业领域。
 - **自动化与人工结合**：提供自动化的客观指标评测，辅以灵活的人工主观评价体系。
 - **多维度评测报告**：生成详尽的评测报告，从不同角度可视化模型性能，并以主评测模型为基准进行对比。
-- **灵活的数据集支持**：集成常用公开评测集，支持自定义数据集（兼容 ms-swift 格式），并特别关注中医药相关数据集的建设。
+- **灵活的数据集支持**：集成常用公开评测集，支持自定义数据集，并特别关注中医药相关数据集的建设。
 - **Gradio WebUI**：提供友好的图形用户界面，简化配置、执行评测和查看结果的流程。
 - **模块化与可扩展**：采用模块化设计，便于开发者贡献新的评测方法、数据集或功能。
 - **Docker化部署**：支持 Docker 容器化部署，简化环境配置。
@@ -107,7 +107,7 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
 
 请在提交 Pull Request 前阅读我们的贡献指南 (CONTRIBUTING.md - 待创建)。
 
-## 联系作者
+## 联系我们
 
-- **GitHub**: [rookielittleblack](https://github.com/rookielittleblack)
 - **项目仓库**: [XpertMedAI/XpertEval](https://github.com/XpertMedAI/XpertEval) 
+- **项目作者**: [rookielittleblack](https://github.com/rookie-littleblack)
