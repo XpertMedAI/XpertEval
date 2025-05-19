@@ -229,25 +229,26 @@
     - `[已完成 - 2025-05-19 13:50]` 提供清晰的错误信息和日志记录
     - `[已完成 - 2025-05-19 13:50]` 设计灵活的接口，便于未来扩展
 
-#### **任务2.1.5：开发数据集文档和示例** `[执行中]`
+#### **任务2.1.5：开发数据集文档和示例** `[已完成 - 2025-05-19 14:02]`
 - **涉及文件**：`docs/datasets/`, `data/examples/`
 - **功能点**：
-    - `[执行中]` 创建详细的数据集文档:
-        - `[执行中]` 编写 `docs/datasets/xpert_format_spec.md`，详细说明 XpertFormat 规范
-        - `[执行中]` 为每种支持的数据集格式创建文档，包括格式说明、示例和使用方法
-        - `[执行中]` 编写数据集转换和自定义数据集创建的教程
+    - `[已完成 - 2025-05-19 14:02]` 创建详细的数据集文档:
+        - `[已完成 - 2025-05-19 14:02]` 编写 `docs/datasets/xpert_format_spec.md`，详细说明 XpertFormat 规范
+        - `[已完成 - 2025-05-19 14:02]` 编写 `docs/datasets/dataset_conversion.md`，说明数据集转换工具
+        - `[已完成 - 2025-05-19 14:02]` 编写 `docs/datasets/dataset_usage.md`，说明数据集使用方法
+        - `[已完成 - 2025-05-19 14:02]` 编写 `docs/datasets/index.md`，提供数据集文档索引
     - `[已完成 - 2025-05-19 10:49]` 提供示例数据集:
         - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/choice_example.jsonl`，展示选择题格式
         - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/math_example.jsonl`，展示数学问题格式
         - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/code_example.jsonl`，展示代码生成任务格式
         - `[已完成 - 2025-05-19 10:49]` 创建 `data/examples/multimodal_example.jsonl`，展示多模态任务格式
-    - `[执行中]` 开发数据集可视化工具:
-        - `[执行中]` 实现 `scripts/preview_dataset.py`，用于预览和检查数据集内容
-        - `[执行中]` 支持不同类型数据的适当展示（文本、代码、图像等）
-- **注意事项**：
-    - `[执行中]` 文档应使用中文，并包含足够的代码示例
-    - `[已完成 - 2025-05-19 10:49]` 示例数据集应覆盖不同类型和格式
-    - `[执行中]` 确保示例数据的质量和代表性
+    - `[已完成 - 2025-05-19 14:02]` 开发数据集可视化工具:
+        - `[已完成 - 2025-05-19 14:02]` 实现 `scripts/preview_dataset.py`，用于预览和检查数据集内容
+        - `[已完成 - 2025-05-19 14:02]` 支持不同类型数据的适当展示（文本、代码、图像等）
+    - `[已完成 - 2025-05-19 14:02]` 配置 GitHub Pages 文档部署:
+        - `[已完成 - 2025-05-19 14:02]` 创建 `docs/_config.yml`，使用 Ant Design 风格
+        - `[已完成 - 2025-05-19 14:02]` 创建 `docs/index.md`，作为文档首页
+        - `[已完成 - 2025-05-19 14:02]` 创建 `.github/workflows/docs_deploy.yml`，配置自动部署
 
 #### **任务2.2：评测器基类与初步实现 (`xperteval/core/base_evaluator.py`, `xperteval/evaluators/`)** `[待执行]`
 - **涉及文件**：`xperteval/core/base_evaluator.py`, `xperteval/evaluators/__init__.py`, `xperteval/evaluators/common/__init__.py`, `xperteval/evaluators/common/accuracy.py` (示例)

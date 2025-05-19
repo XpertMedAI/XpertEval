@@ -1,0 +1,102 @@
+theme: jekyll-theme-cayman
+title: XpertEval
+description: 全模态大模型一站式评测框架
+show_downloads: true
+github:
+  repository_url: https://github.com/XpertMedAI/XpertEval
+  zip_url: https://github.com/XpertMedAI/XpertEval/archive/main.zip
+  tar_url: https://github.com/XpertMedAI/XpertEval/archive/main.tar.gz
+
+# 自定义样式，模拟Ant Design风格
+sass:
+  style: compressed
+
+# 导航菜单
+navigation:
+  - title: 首页
+    url: /
+  - title: 快速开始
+    url: /quick_start.html
+  - title: 用户手册
+    url: /user_manual/
+    submenu:
+      - title: 配置指南
+        url: /user_manual/configuration.html
+      - title: WebUI 使用说明
+        url: /user_manual/web_ui.html
+  - title: 数据集文档
+    url: /datasets/
+    submenu:
+      - title: 数据集概览
+        url: /datasets/index.html
+      - title: XpertFormat 规范
+        url: /datasets/xpert_format_spec.html
+      - title: 数据集转换工具
+        url: /datasets/dataset_conversion.html
+      - title: 数据集使用指南
+        url: /datasets/dataset_usage.html
+  - title: 开发者指南
+    url: /developer_guide/
+    submenu:
+      - title: 架构设计
+        url: /developer_guide/architecture.html
+      - title: 扩展指南
+        url: /developer_guide/extending.html
+
+# 页脚信息
+footer:
+  copyright: Copyright © 2025 XpertEval Team
+  links:
+    - title: GitHub
+      url: https://github.com/XpertMedAI/XpertEval
+    - title: 问题反馈
+      url: https://github.com/XpertMedAI/XpertEval/issues
+
+# 自定义颜色，模拟Ant Design的配色
+colors:
+  primary: "#1890ff"
+  link: "#1890ff"
+  text: "#000000d9"
+  heading: "#000000d9"
+  background: "#ffffff"
+  footer_background: "#f0f2f5"
+
+# 额外的头部标签，用于引入Ant Design样式
+head_extra: |
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css" integrity="sha512-K3Bjl+cEtCT3xmUgQHJH9Bi0QRkjhkRKAgX8FIFdHCezZTZWKY8L4QsWP0WbGP9NqS4UnM9k/aNfZeBaNZoOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      color: #000000d9;
+    }
+    a {
+      color: #1890ff;
+    }
+    a:hover {
+      color: #40a9ff;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      color: #000000d9;
+    }
+    .btn {
+      background-color: #1890ff;
+      border-color: #1890ff;
+    }
+    .btn:hover {
+      background-color: #40a9ff;
+      border-color: #40a9ff;
+    }
+    .site-header {
+      background-color: #001529;
+    }
+    .site-footer {
+      background-color: #f0f2f5;
+    }
+  </style>
+
+# 启用代码高亮
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge 

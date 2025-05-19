@@ -47,6 +47,7 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
     # conda activate xperteval
     # pip install pyyaml
     # pip install tqdm
+    # pip install tabulate matplotlib pillow
     # pip install -r requirements.txt
     ```
 2.  **配置模型 API**：
