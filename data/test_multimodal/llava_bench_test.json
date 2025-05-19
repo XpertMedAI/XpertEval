@@ -1,0 +1,25 @@
+[
+  {
+    "id": "test_001",
+    "image": "test_image1.jpg",
+    "conversations": [
+      {
+        "role": "human",
+        "content": "这张图片中有什么？"
+      },
+      {
+        "role": "assistant",
+        "content": "图片中有一只猫。"
+      },
+      {
+        "role": "human",
+        "content": "它是什么颜色的？"
+      },
+      {
+        "role": "assistant",
+        "content": "这只猫是橘色的。"
+      }
+    ],
+    "category": "图像描述"
+  }
+]

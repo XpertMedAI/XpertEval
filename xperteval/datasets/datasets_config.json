@@ -6,7 +6,7 @@
       "name": "MMLU (Massive Multitask Language Understanding)",
       "description": "包含57个学科领域的多选题评测集，测试模型的知识广度",
       "huggingface_url": "https://huggingface.co/datasets/cais/mmlu",
-      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/mmlu",
+      "modelscope_url": null,
       "local_path": "data/integrated/mmlu",
       "task_type": "choice",
       "language": "en",
@@ -23,7 +23,7 @@
       "name": "CMMLU (Chinese Massive Multitask Language Understanding)",
       "description": "专注于中文知识评测，涵盖67个中文学科领域",
       "huggingface_url": "https://huggingface.co/datasets/haonan-li/cmmlu",
-      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/cmmlu",
+      "modelscope_url": null,
       "local_path": "data/integrated/cmmlu",
       "task_type": "choice",
       "language": "zh",
@@ -39,8 +39,8 @@
     "gsm8k": {
       "name": "GSM8K (Grade School Math 8K)",
       "description": "小学数学应用题，需要多步推理",
-      "huggingface_url": "https://huggingface.co/datasets/gsm8k",
-      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/gsm8k",
+      "huggingface_url": "https://huggingface.co/datasets/openai/gsm8k",
+      "modelscope_url": null,
       "local_path": "data/integrated/gsm8k",
       "task_type": "math",
       "language": "en",
@@ -56,7 +56,7 @@
     "math": {
       "name": "MATH",
       "description": "高中和大学水平的数学问题，包含复杂公式，需要形式化推理",
-      "huggingface_url": "https://huggingface.co/datasets/hendrycks/math",
+      "huggingface_url": null,
       "modelscope_url": null,
       "local_path": "data/integrated/math",
       "task_type": "math",
@@ -73,7 +73,7 @@
     "human_eval": {
       "name": "HumanEval",
       "description": "代码生成任务，需要根据描述生成完整可运行的函数",
-      "huggingface_url": "https://huggingface.co/datasets/openai/human-eval",
+      "huggingface_url": "https://huggingface.co/datasets/openai/openai_humaneval",
       "modelscope_url": null,
       "local_path": "data/integrated/human_eval",
       "task_type": "code",
@@ -91,8 +91,8 @@
     "ceval": {
       "name": "C-Eval",
       "description": "中文评测集，包含多个领域的选择题",
-      "huggingface_url": "https://huggingface.co/datasets/ceval/ceval",
-      "modelscope_url": "https://www.modelscope.cn/datasets/modelscope/ceval",
+      "huggingface_url": "https://huggingface.co/datasets/ceval/ceval-exam",
+      "modelscope_url": null,
       "local_path": "data/integrated/ceval",
       "task_type": "choice",
       "language": "zh",
@@ -108,7 +108,7 @@
     "mmbench": {
       "name": "MMBench",
       "description": "视觉-语言理解任务，需要模型理解图像内容并回答问题",
-      "huggingface_url": "https://huggingface.co/datasets/MMBench/mmbench",
+      "huggingface_url": "https://huggingface.co/datasets/OpenGVLab/GMAI-MMBench",
       "modelscope_url": null,
       "local_path": "data/integrated/mmbench",
       "task_type": "vision",
@@ -126,7 +126,7 @@
     "llava_bench": {
       "name": "LLaVA-Bench",
       "description": "对话式视觉-语言任务，评测模型对图像的理解和描述能力",
-      "huggingface_url": "https://huggingface.co/datasets/liuhaotian/llava-bench",
+      "huggingface_url": "https://huggingface.co/datasets/liuhaotian/llava-bench-in-the-wild",
       "modelscope_url": null,
       "local_path": "data/integrated/llava_bench",
       "task_type": "vision",
@@ -144,7 +144,7 @@
     "seed_bench": {
       "name": "SEED-Bench",
       "description": "包含图像和视频理解任务，测试模型对视觉内容的多方面理解能力",
-      "huggingface_url": "https://huggingface.co/datasets/AILab-CVC/SEED-Bench",
+      "huggingface_url": null,
       "modelscope_url": null,
       "local_path": "data/integrated/seed_bench",
       "task_type": "vision",
@@ -162,7 +162,7 @@
     "mm_vet": {
       "name": "MM-Vet",
       "description": "专注于复杂的视觉推理任务，包括图表理解、视觉常识推理等",
-      "huggingface_url": "https://huggingface.co/datasets/MMVET/mm-vet",
+      "huggingface_url": "https://huggingface.co/datasets/lmms-lab/MMVet",
       "modelscope_url": null,
       "local_path": "data/integrated/mm_vet",
       "task_type": "vision",

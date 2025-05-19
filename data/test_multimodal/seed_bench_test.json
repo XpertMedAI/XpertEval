@@ -1,0 +1,32 @@
+[
+  {
+    "sample_id": "test_001",
+    "image_paths": [
+      "test_image1.jpg",
+      "test_image2.jpg"
+    ],
+    "question": "这两张图片有什么区别？",
+    "choices": [
+      "颜色不同",
+      "大小不同",
+      "形状不同",
+      "没有区别"
+    ],
+    "answer": 0,
+    "task_type": "图像比较"
+  },
+  {
+    "sample_id": "test_002",
+    "image_paths": [
+      "test_image1.jpg"
+    ],
+    "video_path": "test_video.mp4",
+    "question": "视频中的动物与图片中的是同一种吗？",
+    "choices": [
+      "是",
+      "否"
+    ],
+    "answer": 1,
+    "task_type": "视频理解"
+  }
+]

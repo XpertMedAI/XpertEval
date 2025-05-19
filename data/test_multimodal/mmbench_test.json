@@ -1,0 +1,30 @@
+[
+  {
+    "question_id": "test_001",
+    "image": "test_image1.jpg",
+    "question": "这张图片中有什么？",
+    "choices": [
+      "猫",
+      "狗",
+      "鸟",
+      "鱼"
+    ],
+    "answer": "A",
+    "category": "图像识别",
+    "difficulty": "简单"
+  },
+  {
+    "question_id": "test_002",
+    "image": "test_image2.jpg",
+    "question": "图中的动物是什么颜色？",
+    "choices": [
+      "红色",
+      "蓝色",
+      "绿色",
+      "黄色"
+    ],
+    "answer": "D",
+    "category": "属性识别",
+    "difficulty": "中等"
+  }
+]

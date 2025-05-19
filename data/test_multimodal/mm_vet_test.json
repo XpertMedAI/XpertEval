@@ -1,0 +1,24 @@
+[
+  {
+    "id": "test_001",
+    "image": "test_image1.jpg",
+    "question": "详细描述这张图片中的场景。",
+    "answer": "图片中是一只橘色的猫，它正坐在窗台上。",
+    "category": "场景描述",
+    "difficulty": "简单"
+  },
+  {
+    "id": "test_002",
+    "image": "test_image2.jpg",
+    "question": "图中的动物可能在做什么？",
+    "choices": [
+      "吃东西",
+      "睡觉",
+      "玩耍",
+      "奔跑"
+    ],
+    "answer": "B",
+    "category": "行为推理",
+    "difficulty": "中等"
+  }
+]
