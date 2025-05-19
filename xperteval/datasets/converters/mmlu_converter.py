@@ -49,11 +49,12 @@ import glob
 
 from ..base_dataset import BaseDataset
 from ...utils import get_logger
+from .format_validator import validate_xpert_format
 
 # 配置日志
 logger = get_logger(__name__)
 
-def convert_mmlu_parquet_to_xpert(source_dir: str, output_path: str, split: str = 'test') -> bool:
+def convert_mmlu_parquet_to_xpert(source_dir: str, output_path: str, split: str = 'test', validate: bool = True) -> bool:
     """
     将从Hugging Face下载的MMLU数据集的parquet文件转换为XpertFormat格式
     
@@ -61,6 +62,7 @@ def convert_mmlu_parquet_to_xpert(source_dir: str, output_path: str, split: str 
         source_dir: 数据集目录路径，可以是直接包含parquet文件的目录，也可以包含多个学科子目录
         output_path: 输出文件路径
         split: 数据集分割，如'test', 'validation', 'dev'等
+        validate: 是否验证转换后的数据格式
         
     Returns:
         布尔值，表示转换是否成功
@@ -116,6 +118,21 @@ def convert_mmlu_parquet_to_xpert(source_dir: str, output_path: str, split: str 
     if not all_data:
         logger.error("未能成功转换任何数据")
         return False
+    
+    # 验证数据格式
+    if validate:
+        logger.info(f"验证转换后的数据格式...")
+        is_valid, errors, _ = validate_xpert_format(all_data)
+        if not is_valid:
+            logger.warning(f"数据格式验证失败，发现 {len(errors)} 个问题:")
+            for i, error in enumerate(errors[:10]):  # 只显示前10个错误
+                logger.warning(f"  {i+1}. {error}")
+            if len(errors) > 10:
+                logger.warning(f"  ... 及其他 {len(errors) - 10} 个问题")
+            # 即使有错误也继续保存
+            logger.warning("尽管存在格式问题，仍将保存转换后的数据")
+        else:
+            logger.info("数据格式验证成功")
     
     # 保存转换后的数据
     try:
@@ -203,13 +220,14 @@ def process_parquet_file(parquet_file: Path, subject_name: str = None) -> List[D
         logger.error(f"处理文件 {parquet_file} 时出错: {e}")
         return []
 
-def convert_single_mmlu_parquet(parquet_file: str, output_path: str) -> bool:
+def convert_single_mmlu_parquet(parquet_file: str, output_path: str, validate: bool = True) -> bool:
     """
     转换单个MMLU parquet文件到XpertFormat
     
     Args:
         parquet_file: parquet文件路径
         output_path: 输出文件路径
+        validate: 是否验证转换后的数据格式
         
     Returns:
         布尔值，表示转换是否成功
@@ -217,71 +235,41 @@ def convert_single_mmlu_parquet(parquet_file: str, output_path: str) -> bool:
     logger.info(f"开始转换单个MMLU parquet文件: {parquet_file}")
     
     try:
-        # 读取parquet文件
-        df = pd.read_parquet(parquet_file)
-        
-        # 收集转换后的数据
-        all_data = []
-        
         # 从文件路径提取学科名称
         file_path = Path(parquet_file)
         subject_name = file_path.parent.name
         
-        # 转换为XpertFormat
-        for i, row in df.iterrows():
-            # 提取数据
-            question = row['question']
-            subject = row.get('subject', subject_name)
-            choices = row['choices']
-            answer = row['answer']
-            
-            # 确保choices是正确的格式并进行转换
-            if isinstance(choices, np.ndarray):
-                choice_options = choices.tolist()
-            elif isinstance(choices, list):
-                choice_options = choices
+        # 处理parquet文件
+        data = process_parquet_file(file_path, subject_name)
+        
+        if not data:
+            logger.error(f"未能成功转换任何数据从 {parquet_file}")
+            return False
+        
+        # 验证数据格式
+        if validate:
+            logger.info(f"验证转换后的数据格式...")
+            is_valid, errors, _ = validate_xpert_format(data)
+            if not is_valid:
+                logger.warning(f"数据格式验证失败，发现 {len(errors)} 个问题:")
+                for i, error in enumerate(errors[:10]):  # 只显示前10个错误
+                    logger.warning(f"  {i+1}. {error}")
+                if len(errors) > 10:
+                    logger.warning(f"  ... 及其他 {len(errors) - 10} 个问题")
+                # 即使有错误也继续保存
+                logger.warning("尽管存在格式问题，仍将保存转换后的数据")
             else:
-                logger.warning(f"未知的choices格式: {type(choices)}")
-                continue
-            
-            # 确保有足够的选项
-            if len(choice_options) < 4:
-                logger.warning(f"选项数量不足4个: {choice_options}")
-                continue
-            
-            # 创建XpertFormat样本
-            sample = {
-                "id": f"mmlu_{subject}_{i}",
-                "query": question,
-                "choices": [
-                    {"id": "A", "content": str(choice_options[0])},
-                    {"id": "B", "content": str(choice_options[1])},
-                    {"id": "C", "content": str(choice_options[2])},
-                    {"id": "D", "content": str(choice_options[3])}
-                ],
-                "answer": {
-                    "type": "choice",
-                    "value": "ABCD"[answer],  # 将数字索引转换为选项字母
-                    "explanation": None
-                },
-                "meta": {
-                    "task_type": "choice",
-                    "subject": subject,
-                    "source": "MMLU"
-                }
-            }
-            
-            all_data.append(sample)
+                logger.info("数据格式验证成功")
         
         # 保存转换后的数据
         output_dir = Path(output_path).parent
         os.makedirs(output_dir, exist_ok=True)
         
         with open(output_path, 'w', encoding='utf-8') as f:
-            for sample in all_data:
+            for sample in data:
                 f.write(json.dumps(sample, ensure_ascii=False) + '\n')
         
-        logger.info(f"成功将 {len(all_data)} 个样本保存到 {output_path}")
+        logger.info(f"成功将 {len(data)} 个样本保存到 {output_path}")
         return True
         
     except Exception as e:
@@ -292,7 +280,7 @@ def convert_mmlu_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
     """
     将MMLU数据集转换为XpertFormat格式
     
-    支持转换从Hugging Face下载的parquet文件或原始CSV文件
+    支持转换原始CSV文件和从Hugging Face下载的parquet文件
     
     Args:
         source_path: 数据集文件或目录路径
@@ -300,31 +288,33 @@ def convert_mmlu_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
         **kwargs: 额外参数
             - split: 数据集分割，默认为'test'
             - subject: 特定学科，默认为None(全部学科)
+            - validate: 是否验证数据格式，默认为True
         
     Returns:
         布尔值，表示转换是否成功
     """
     source_path = Path(source_path)
     split = kwargs.get('split', 'test')
+    subject = kwargs.get('subject', None)
+    validate = kwargs.get('validate', True)
     
     # 检查是否是parquet文件
-    if source_path.is_file() and source_path.suffix == '.parquet':
-        return convert_single_mmlu_parquet(str(source_path), output_path)
+    if source_path.is_file() and source_path.suffix.lower() == '.parquet':
+        return convert_single_mmlu_parquet(str(source_path), output_path, validate=validate)
     
     # 检查是否是包含parquet文件的目录
     elif source_path.is_dir():
-        parquet_files = list(source_path.glob(f"**/{split}-*.parquet"))
-        if parquet_files:
-            return convert_mmlu_parquet_to_xpert(str(source_path), output_path, split)
+        # 如果指定了subject，只处理该学科
+        if subject:
+            subject_dir = source_path / subject
+            if subject_dir.exists() and subject_dir.is_dir():
+                return convert_mmlu_parquet_to_xpert(str(subject_dir), output_path, split, validate=validate)
+            else:
+                logger.error(f"未找到学科目录: {subject_dir}")
+                return False
         
-        # 如果没有找到parquet文件，尝试使用MMLUDataset进行转换
-        try:
-            from ..common_benchmarks.mmlu_dataset import MMLUDataset
-            dataset = MMLUDataset(str(source_path), split=split, **kwargs)
-            return dataset.convert_to_xpert_format(output_path)
-        except Exception as e:
-            logger.error(f"使用MMLUDataset转换失败: {e}")
-            return False
+        # 处理整个目录
+        return convert_mmlu_parquet_to_xpert(str(source_path), output_path, split, validate=validate)
     
     else:
         logger.error(f"不支持的数据源: {source_path}")
@@ -334,23 +324,17 @@ def main():
     """
     命令行入口函数
     
-    支持通过命令行参数转换MMLU数据集，可处理parquet格式和CSV格式的数据。
+    支持通过命令行参数转换MMLU数据集
     
-    用法示例：
-        # 转换单个parquet文件
-        python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/abstract_algebra/test-00000-of-00001.parquet --output data/integrated/mmlu/abstract_algebra_test.jsonl
-        
-        # 转换一个学科的所有测试数据
-        python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/abstract_algebra --output data/integrated/mmlu/abstract_algebra.jsonl --split test
-        
-        # 转换整个MMLU数据集的测试集
-        python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu --output data/integrated/mmlu/dataset.jsonl --split test
+    用法：
+        python -m xperteval.datasets.converters.mmlu_converter --source <source_path> --output <output_path> [--split <split>] [--subject <subject>] [--no-validate]
     """
     parser = argparse.ArgumentParser(description='将MMLU数据集转换为XpertFormat格式')
     parser.add_argument('--source', required=True, help='源数据目录或文件路径')
     parser.add_argument('--output', required=True, help='输出文件路径')
-    parser.add_argument('--split', default='test', help='数据集分割(test/validation/dev)')
-    parser.add_argument('--subject', help='指定学科(仅在处理CSV格式时使用)')
+    parser.add_argument('--split', default='test', help='数据集分割(test/validation)')
+    parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
+    parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
     args = parser.parse_args()
     
@@ -363,26 +347,20 @@ def main():
     # 根据源路径类型选择不同的转换方法
     success = False
     
-    if source_path.is_file():
-        if source_path.suffix.lower() == '.parquet':
-            logger.info(f"转换单个Parquet文件: {source_path}")
-            success = convert_single_mmlu_parquet(str(source_path), args.output)
-        elif source_path.suffix.lower() == '.csv':
-            logger.info(f"转换单个CSV文件: {source_path}")
-            try:
-                from ..common_benchmarks.mmlu_dataset import MMLUDataset
-                dataset = MMLUDataset(str(source_path), split=args.split, subject=args.subject)
-                success = dataset.convert_to_xpert_format(args.output)
-            except Exception as e:
-                logger.error(f"转换CSV文件失败: {e}")
-                return 1
-        else:
-            logger.error(f"不支持的文件格式: {source_path.suffix}")
-            return 1
+    if source_path.is_file() and source_path.suffix.lower() == '.parquet':
+        logger.info(f"转换单个parquet文件: {source_path}")
+        success = convert_single_mmlu_parquet(str(source_path), args.output, validate=not args.no_validate)
     elif source_path.is_dir():
-        logger.info(f"转换目录: {source_path}, 分割: {args.split}")
-        # 尝试转换，可能是parquet格式或CSV格式
-        success = convert_mmlu_to_xpert(str(source_path), args.output, split=args.split, subject=args.subject)
+        params = {
+            "split": args.split,
+            "validate": not args.no_validate
+        }
+        if args.subject:
+            params["subject"] = args.subject
+            logger.info(f"转换特定学科: {args.subject}, 分割: {args.split}")
+        else:
+            logger.info(f"转换目录: {source_path}, 分割: {args.split}")
+        success = convert_mmlu_to_xpert(str(source_path), args.output, **params)
     else:
         logger.error(f"不支持的源路径: {source_path}")
         return 1
