@@ -16,8 +16,8 @@ toc: true
 
 本用户手册包含以下内容：
 
-- [配置指南](./configuration.html)：详细说明如何配置模型 API 和评测参数
-- [WebUI 使用说明](./web_ui.html)：介绍 Gradio WebUI 的使用方法
+- [配置指南](./user_manual/configuration.html)：详细说明如何配置模型 API 和评测参数
+- [WebUI 使用说明](./user_manual/web_ui.html)：介绍 Gradio WebUI 的使用方法
 
 ## 快速参考
 

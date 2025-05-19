@@ -4,7 +4,7 @@ title: XpertEval
 description: 全模态大模型一站式评测框架
 logo: /assets/images/logo.png
 aux_links:
-  "GitHub":
+  "XpertEval":
     - "https://github.com/XpertMedAI/XpertEval"
 
 # 颜色设置
@@ -18,7 +18,7 @@ toc:
 
 # 导航设置
 nav_external_links:
-  - title: XpertEval on GitHub
+  - title: XpertEval
     url: https://github.com/XpertMedAI/XpertEval
     hide_icon: false
 

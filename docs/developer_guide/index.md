@@ -16,8 +16,8 @@ toc: true
 
 本开发者指南包含以下内容：
 
-- [架构设计](./architecture.html)：详细介绍 XpertEval 框架的架构设计
-- [扩展指南](./extending.html)：说明如何扩展 XpertEval 框架的功能
+- [架构设计](./developer_guide/architecture.html)：详细介绍 XpertEval 框架的架构设计
+- [扩展指南](./developer_guide/extending.html)：说明如何扩展 XpertEval 框架的功能
 
 ## 快速参考
 
