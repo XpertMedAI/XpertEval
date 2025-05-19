@@ -1,10 +1,28 @@
+---
+layout: default
+title: 数据集文档
+nav_order: 3
+has_children: true
+permalink: /datasets
+---
+
 # XpertEval 数据集文档
+{: .no_toc }
 
 XpertEval 框架支持多种评测数据集，包括通用文本评测数据集、多模态评测数据集以及专业领域（如中医药）评测数据集。本文档提供 XpertEval 数据集相关功能的概述和指南。
 
+<details open markdown="block">
+  <summary>
+    目录
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
+
 ## 数据集格式
 
-XpertEval 使用统一的 XpertFormat 格式来表示各种评测数据集。这种格式基于 JSONL（JSON Lines），支持多种任务类型和多模态内容。详细的格式规范请参阅 [XpertFormat 规范文档](./xpert_format_spec.md)。
+XpertEval 使用统一的 XpertFormat 格式来表示各种评测数据集。这种格式基于 JSONL（JSON Lines），支持多种任务类型和多模态内容。详细的格式规范请参阅 [XpertFormat 规范文档](./xpert_format_spec.html)。
 
 ## 支持的数据集
 
@@ -34,13 +52,13 @@ XpertEval 目前支持以下类型的评测数据集：
 
 XpertEval 提供了一系列工具来处理和管理评测数据集：
 
-- **数据集转换工具**：将各种格式的数据集转换为统一的 XpertFormat 格式，详见 [数据集转换工具文档](./dataset_conversion.md)
+- **数据集转换工具**：将各种格式的数据集转换为统一的 XpertFormat 格式，详见 [数据集转换工具文档](./dataset_conversion.html)
 - **数据集管理器**：提供数据集下载、转换、分割、采样和过滤等功能
 - **数据集预览工具**：用于预览和检查数据集内容
 
 ## 使用指南
 
-关于如何在 XpertEval 框架中使用各种评测数据集，请参阅 [数据集使用指南](./dataset_usage.md)。
+关于如何在 XpertEval 框架中使用各种评测数据集，请参阅 [数据集使用指南](./dataset_usage.html)。
 
 ## 自定义数据集
 
@@ -50,7 +68,7 @@ XpertEval 支持创建和使用自定义评测数据集。您可以：
 2. 实现自定义数据集类，继承 `BaseDataset` 类
 3. 使用数据集转换工具将现有数据集转换为 XpertFormat 格式
 
-详细指南请参阅 [数据集使用指南](./dataset_usage.md) 中的"创建自定义数据集"部分。
+详细指南请参阅 [数据集使用指南](./dataset_usage.html) 中的"创建自定义数据集"部分。
 
 ## 相关脚本
 

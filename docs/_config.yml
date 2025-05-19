@@ -1,11 +1,71 @@
-theme: jekyll-theme-cayman
+theme: jekyll-theme-minimal
+remote_theme: pmarsceill/just-the-docs
 title: XpertEval
 description: 全模态大模型一站式评测框架
-show_downloads: true
-github:
-  repository_url: https://github.com/XpertMedAI/XpertEval
-  zip_url: https://github.com/XpertMedAI/XpertEval/archive/main.zip
-  tar_url: https://github.com/XpertMedAI/XpertEval/archive/main.tar.gz
+logo: /assets/images/logo.png
+aux_links:
+  "GitHub":
+    - "https://github.com/XpertMedAI/XpertEval"
+
+# 颜色设置
+color_scheme: light
+
+# 导航设置
+nav_external_links:
+  - title: XpertEval on GitHub
+    url: https://github.com/XpertMedAI/XpertEval
+    hide_icon: false
+
+# 搜索设置
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: true
+
+# 启用代码高亮
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# 页脚设置
+footer_content: "Copyright &copy; 2025 XpertEval Team. 基于 <a href=\"https://github.com/pmarsceill/just-the-docs\">Just the Docs</a> 主题."
+
+# 自定义CSS
+head_scripts:
+  - url: https://cdn.jsdelivr.net/npm/mermaid@8.13.3/dist/mermaid.min.js
+    crossorigin: anonymous
+
+# 自定义样式
+callouts:
+  warning:
+    title: 警告
+    color: red
+  note:
+    title: 注意
+    color: blue
+  tip:
+    title: 提示
+    color: green
+
+# 启用回到顶部按钮
+back_to_top: true
+back_to_top_text: "返回顶部"
+
+# 启用锚点链接
+heading_anchors: true
+
+# 启用复制代码按钮
+enable_copy_code_button: true
+
+# 启用深色模式切换
+color_scheme: nil
 
 # 自定义样式，模拟Ant Design风格
 sass:
@@ -92,11 +152,4 @@ head_extra: |
     .site-footer {
       background-color: #f0f2f5;
     }
-  </style>
-
-# 启用代码高亮
-markdown: kramdown
-highlighter: rouge
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge 
+  </style> 

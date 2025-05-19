@@ -1,8 +1,25 @@
+---
+layout: default
+title: 数据集转换工具
+parent: 数据集文档
+nav_order: 2
+---
+
 # 数据集转换工具
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    目录
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 XpertEval 框架提供了一套完整的工具，用于将各种常见评测数据集格式转换为统一的 XpertFormat 格式。本文档介绍如何使用这些转换工具。
 
-## 1. 命令行转换工具
+## 命令行转换工具
 
 XpertEval 提供了命令行工具 `convert_dataset.py`，可以方便地进行数据集格式转换：
 
@@ -20,7 +37,7 @@ python scripts/convert_dataset.py --help
 python scripts/convert_dataset.py guidelines
 ```
 
-### 1.1 参数说明
+### 参数说明
 
 - `--input`: 输入文件或目录路径
 - `--output`: 输出文件路径，默认为 `<输入文件名>_xpert.jsonl`
@@ -30,7 +47,7 @@ python scripts/convert_dataset.py guidelines
 - `--verbose`: 显示详细日志
 - `--overwrite`: 覆盖已存在的输出文件
 
-### 1.2 示例
+### 示例
 
 ```bash
 # 转换 MMLU 数据集
@@ -40,7 +57,7 @@ python scripts/convert_dataset.py --input data/original/mmlu/dev.csv --output da
 python scripts/convert_dataset.py --input data/original/mmbench/data.json --output data/integrated/mmbench/dataset.jsonl --type mmbench --media-dir data/integrated/mmbench/media
 ```
 
-## 2. 编程接口
+## 编程接口
 
 也可以在 Python 代码中直接使用转换函数：
 
@@ -66,11 +83,11 @@ results = batch_convert(
 print(f"批量转换结果: {results}")
 ```
 
-## 3. 支持的数据集类型
+## 支持的数据集类型
 
 XpertEval 目前支持以下数据集类型的转换：
 
-### 3.1 通用评测数据集
+### 通用评测数据集
 
 | 数据集类型 | 描述 | 原始格式 |
 |------------|------|----------|
@@ -81,7 +98,7 @@ XpertEval 目前支持以下数据集类型的转换：
 | `human_eval` | HumanEval | JSON |
 | `ceval` | C-Eval | JSON |
 
-### 3.2 多模态评测数据集
+### 多模态评测数据集
 
 | 数据集类型 | 描述 | 原始格式 |
 |------------|------|----------|
@@ -90,7 +107,7 @@ XpertEval 目前支持以下数据集类型的转换：
 | `seed_bench` | SEED-Bench | JSONL |
 | `mm_vet` | MM-Vet | JSON |
 
-## 4. 自定义转换器
+## 自定义转换器
 
 如果需要支持新的数据集格式，可以扩展 `to_xpert_format.py` 模块，添加自定义转换函数：
 
@@ -122,7 +139,7 @@ def convert_my_dataset(input_path, output_path, **kwargs):
 python scripts/convert_dataset.py --input my_data.json --output my_data_xpert.jsonl --type my_dataset
 ```
 
-## 5. 转换后的验证
+## 转换后的验证
 
 建议在转换后使用验证工具检查数据格式是否符合 XpertFormat 规范：
 
@@ -134,9 +151,9 @@ python scripts/convert_dataset.py validate --input path/to/converted.jsonl
 python scripts/convert_dataset.py --input input.csv --output output.jsonl --type mmlu --validate
 ```
 
-## 6. 常见问题解决
+## 常见问题解决
 
-### 6.1 媒体文件路径问题
+### 媒体文件路径问题
 
 多模态数据集转换时，需要特别注意媒体文件路径的处理：
 
@@ -144,7 +161,7 @@ python scripts/convert_dataset.py --input input.csv --output output.jsonl --type
 - 指定媒体目录：使用 `--media-dir` 参数指定媒体文件的存放目录
 - 文件不存在：转换工具会检查媒体文件是否存在，如果不存在会发出警告
 
-### 6.2 字符编码问题
+### 字符编码问题
 
 处理中文或其他非ASCII字符时，可能遇到编码问题：
 
@@ -163,7 +180,7 @@ convert_to_xpert_format(
 )
 ```
 
-### 6.3 大型数据集处理
+### 大型数据集处理
 
 对于特别大的数据集，可以使用流式处理模式减少内存占用：
 

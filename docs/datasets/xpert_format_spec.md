@@ -1,4 +1,21 @@
+---
+layout: default
+title: XpertFormat 规范
+parent: 数据集文档
+nav_order: 1
+---
+
 # XpertFormat 数据集格式规范
+{: .no_toc }
+
+<details open markdown="block">
+  <summary>
+    目录
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
 XpertFormat 是 XpertEval 框架中使用的统一数据集格式，设计用于支持各种评测任务，包括文本问答、选择题、数学问题、代码生成以及多模态任务。本文档详细说明了 XpertFormat 的规范和使用方法。
 
@@ -249,4 +266,4 @@ if not is_valid:
 
 ## 7. 转换工具
 
-XpertEval 提供了将各种格式转换为 XpertFormat 的工具，详见 [数据集转换工具文档](./dataset_conversion.md)。 
+XpertEval 提供了将各种格式转换为 XpertFormat 的工具，详见 [数据集转换工具文档](./dataset_conversion.html)。 

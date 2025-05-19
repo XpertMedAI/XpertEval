@@ -93,7 +93,7 @@ XpertEval 是一个专为全模态大模型设计的通用型、一站式评测�
 
 ## 文档
 
-详细的项目文档（包括用户手册、开发指南、API参考等）将部署在：[XpertEval GitHub Pages链接 (待定)]()
+详细的项目文档（包括用户手册、开发指南、API参考等）见[XpertEval 文档](https://xpertmedai.github.io/XpertEval/)
 
 ## 开源协议
 

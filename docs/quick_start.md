@@ -1,158 +1,132 @@
+---
+layout: default
+title: 快速开始
+nav_order: 2
+---
+
 # 快速开始
+{: .no_toc }
 
-本指南将帮助您快速上手 XpertEval 框架，了解如何安装、配置和运行基本的模型评测。
+<details open markdown="block">
+  <summary>
+    目录
+  </summary>
+  {: .text-delta }
+1. TOC
+{:toc}
+</details>
 
-## 1. 安装
+## 安装
 
-### 1.1 环境要求
+### 系统要求
 
-- Python 3.8 或更高版本
+- Python 3.8+
 - pip 或 conda 包管理器
+- Git (可选，用于克隆仓库)
 
-### 1.2 安装步骤
+### 安装步骤
 
-#### 方法一：从 GitHub 克隆
+1. 克隆仓库（或下载ZIP包）
 
 ```bash
-# 克隆仓库
-git clone https://github.com/yourusername/xperteval.git
-cd xperteval
+git clone https://github.com/XpertMedAI/XpertEval.git
+cd XpertEval
+```
 
-# 创建并激活虚拟环境（可选但推荐）
-conda create -n xperteval python=3.8
-conda activate xperteval
+2. 安装依赖
 
-# 安装依赖
+```bash
 pip install -r requirements.txt
 ```
 
-#### 方法二：使用 Docker
+3. 验证安装
 
 ```bash
-# 构建 Docker 镜像
-docker build -t xperteval .
-
-# 运行 Docker 容器
-docker run -it --name xperteval-container -p 7860:7860 xperteval
+python -c "import xperteval; print(f'XpertEval 安装成功，版本 {open(\"VERSION\").read().strip()}')"
 ```
 
-## 2. 配置
+## 配置模型
 
-XpertEval 需要配置至少两个模型的 API 信息才能进行评测。配置文件支持 YAML 或 JSON 格式。
-
-### 2.1 创建配置文件
-
-创建一个名为 `config.yaml` 的文件，内容如下：
+XpertEval 需要配置至少两个模型进行对比评测。创建一个配置文件（YAML或JSON格式）：
 
 ```yaml
 default_params:
   MAX_TOKENS: 4096
   TEMPERATURE: 0.7
   TOP_P: 0.95
-  TOP_K: 0.95
+  TOP_K: 40
   FREQUENCY_PENALTY: 0.0
   PRESENCE_PENALTY: 0.0
   REQUEST_TIMEOUT: 120
 
 models:
-  - MODEL_NAME: "gpt-4"
+  - OPENAI_API_BASE: "https://api.openai.com/v1"
+    OPENAI_API_KEY: "sk-xxxx"
+    MODEL_NAME: "gpt-4"
     MODEL_TYPE: "text"
-    OPENAI_API_BASE: "https://api.openai.com/v1"
-    OPENAI_API_KEY: "your-api-key-1"
     MAIN_API: true
     
-  - MODEL_NAME: "claude-3-opus-20240229"
+  - OPENAI_API_BASE: "http://localhost:8000/v1"
+    OPENAI_API_KEY: "sk-xxxx"
+    MODEL_NAME: "llama3-70b"
     MODEL_TYPE: "text"
-    OPENAI_API_BASE: "https://api.anthropic.com/v1/messages"
-    OPENAI_API_KEY: "your-api-key-2"
     MAIN_API: false
 ```
 
-> **注意**：请将 `your-api-key-1` 和 `your-api-key-2` 替换为您的实际 API 密钥。
+将此配置保存为 `models.yaml`。
 
-### 2.2 配置说明
+## 运行评测
 
-- `default_params`：全局默认参数，适用于所有模型
-- `models`：模型配置列表，至少需要两个模型
-  - `MODEL_NAME`：模型名称
-  - `MODEL_TYPE`：模型类型，可选值：`text`、`vision`、`audio`、`mllm`
-  - `OPENAI_API_BASE`：API 服务地址
-  - `OPENAI_API_KEY`：API 密钥
-  - `MAIN_API`：是否为主评测 API，只能有一个模型设置为 `true`
+### 命令行评测
 
-## 3. 运行评测
-
-### 3.1 命令行评测
-
-使用内置评测数据集：
+使用内置示例数据集运行评测：
 
 ```bash
-python main.py --config config.yaml --dataset_id mmlu --evaluators accuracy
+python main.py --config models.yaml --dataset_path data/examples/choice_example.jsonl
 ```
 
-使用自定义数据集：
+指定输出目录：
 
 ```bash
-python main.py --config config.yaml --dataset_path data/custom/my_dataset.jsonl --dataset_type xpert-format
+python main.py --config models.yaml --dataset_path data/examples/choice_example.jsonl --output_dir results/my_test
 ```
 
-### 3.2 参数说明
+### 使用Web界面
 
-- `--config`：模型配置文件路径
-- `--dataset_id`：内置数据集的 ID
-- `--dataset_path`：自定义数据集文件路径
-- `--dataset_type`：数据集类型，默认为 `xpert-format`
-- `--evaluators`：使用的评测指标，多个指标用逗号分隔
-- `--output_dir`：评测结果输出目录
-- `--report_formats`：报告格式，可选值：`markdown`、`json`、`html`
-
-### 3.3 启动 Web UI
-
-XpertEval 提供了基于 Gradio 的 Web 界面，方便进行评测配置和结果查看：
+启动Gradio Web界面：
 
 ```bash
 python app.py
 ```
 
-启动后，在浏览器中访问 `http://localhost:7860` 即可使用 Web UI。
+然后在浏览器中访问 `http://localhost:7860`。
 
-## 4. 示例
+## 查看结果
 
-### 4.1 基本评测示例
+评测完成后，结果将保存在指定的输出目录（默认为 `results/<timestamp>/`）。
+
+结果包括：
+- `report.md`：Markdown格式的评测报告
+- `report.json`：JSON格式的详细评测数据
+- `report.html`：HTML格式的可视化报告（如果启用）
+
+## 常见问题
+
+### API连接问题
+
+如果遇到API连接问题，请检查：
+1. API地址是否正确
+2. API密钥是否有效
+3. 网络连接是否正常
+
+### 内存不足
+
+对于大型数据集，可以使用批处理模式：
 
 ```bash
-# 使用 MMLU 数据集评测模型
-python main.py --config config.yaml --dataset_id mmlu --evaluators accuracy,f1_score
-
-# 使用选择题示例数据集
-python main.py --config config.yaml --dataset_path data/examples/choice_example.jsonl
+python main.py --config models.yaml --dataset_path large_dataset.jsonl --batch_size 10
 ```
 
-### 4.2 多模态评测示例
+### 自定义评测指标
 
-```bash
-# 使用 MMBench 多模态数据集
-python main.py --config config.yaml --dataset_id mmbench
-```
-
-### 4.3 人工评测示例
-
-```bash
-# 启动人工评测模式
-python main.py --config config.yaml --dataset_id mmlu --mode manual
-```
-
-## 5. 查看评测报告
-
-评测完成后，结果将保存在指定的输出目录（默认为 `results/<timestamp>/`）中，包括：
-
-- `report.md`：Markdown 格式的评测报告
-- `report.json`：JSON 格式的详细评测结果
-- `report.html`：HTML 格式的可视化评测报告（如果指定了 `html` 格式）
-
-## 6. 下一步
-
-- 了解如何[创建自定义数据集](./datasets/dataset_usage.md#4-创建自定义数据集)
-- 学习如何[配置和使用 Web UI](./user_manual/web_ui.md)
-- 探索[支持的评测指标](./user_manual/metrics.md)
-- 查看[架构设计](./developer_guide/architecture.md)，了解如何扩展框架 
+要使用自定义评测指标，请参阅[开发者指南](/developer_guide/extending.html) 

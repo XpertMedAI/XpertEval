@@ -1,6 +1,20 @@
-# XpertEval - 全模态大模型一站式评测框架
+---
+layout: default
+title: 首页
+nav_order: 1
+permalink: /
+---
 
-XpertEval 是一个通用的、轻量级的全模态大模型一站式评测框架。该框架不仅支持对通用领域大模型能力的评测，还重点集成对专业领域（初期聚焦于中医药领域）全模态大模型的评测能力。
+# XpertEval - 全模态大模型一站式评测框架
+{: .fs-9 }
+
+轻量级、全面的大模型评测工具，支持通用能力和专业领域评测
+{: .fs-6 .fw-300 }
+
+[快速开始](/quick_start.html){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[查看GitHub](https://github.com/XpertMedAI/XpertEval){: .btn .fs-5 .mb-4 .mb-md-0 }
+
+---
 
 ## 主要特点
 
@@ -26,18 +40,18 @@ python main.py --config config_example.yaml --dataset_path data/examples/choice_
 
 ## 文档目录
 
-- [快速开始](./quick_start.md)
+- [快速开始](./quick_start)
 - 用户手册
-  - [配置指南](./user_manual/configuration.md)
-  - [WebUI 使用说明](./user_manual/web_ui.md)
+  - [配置指南](./user_manual/configuration)
+  - [WebUI 使用说明](./user_manual/web_ui)
 - 数据集文档
-  - [数据集概览](./datasets/index.md)
-  - [XpertFormat 规范](./datasets/xpert_format_spec.md)
-  - [数据集转换工具](./datasets/dataset_conversion.md)
-  - [数据集使用指南](./datasets/dataset_usage.md)
+  - [数据集概览](./datasets/index)
+  - [XpertFormat 规范](./datasets/xpert_format_spec)
+  - [数据集转换工具](./datasets/dataset_conversion)
+  - [数据集使用指南](./datasets/dataset_usage)
 - 开发者指南
-  - [架构设计](./developer_guide/architecture.md)
-  - [扩展指南](./developer_guide/extending.md)
+  - [架构设计](./developer_guide/architecture)
+  - [扩展指南](./developer_guide/extending)
 
 ## 支持的评测能力
 
@@ -73,11 +87,13 @@ XpertEval 支持多种评测数据集，包括：
 - **多模态评测数据集**：MMBench、LLaVA-Bench、SEED-Bench、MM-Vet 等
 - **中医药领域评测数据集**：正在开发中
 
-详细信息请参阅 [数据集文档](./datasets/index.md)。
+详细信息请参阅 [数据集文档](/datasets/index)。
 
 ## 贡献
 
-欢迎贡献代码、报告问题或提出新功能建议！请参阅 [贡献指南](./developer_guide/contributing.md) 了解详情。
+欢迎贡献代码、报告问题或提出新功能建议！请参阅 [贡献指南](./developer_guide/contributing) 了解详情。
+
+---
 
 ## 许可证
 
