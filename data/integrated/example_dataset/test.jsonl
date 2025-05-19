@@ -1,0 +1,1 @@
+{"id": "example_1", "query": "This is an example question?", "response": "This is an example answer", "is_multimodal": false, "is_multi_turn": false, "is_choice": false, "history": [], "answer": {"type": "text", "value": "This is an example answer", "explanation": ""}, "meta": {"task_type": "qa", "category": "", "difficulty": ""}}

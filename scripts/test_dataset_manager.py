@@ -1,216 +1,226 @@
 #!/usr/bin/env python
 # coding: utf-8
 """
-数据集管理器测试脚本
+测试数据集管理器
+
+这个脚本用于测试数据集管理器的功能，包括数据集注册、扫描、分割、采样和过滤等。
 """
 
 import os
 import sys
 import json
+import argparse
 from pathlib import Path
 
-# 将项目根目录添加到Python路径
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
+# 添加项目根目录到Python路径
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from xperteval.datasets import DatasetManager
+from xperteval.datasets.registered_datasets import (
+    scan_integrated_datasets,
+    get_dataset,
+    list_available_datasets,
+    register_dataset_type,
+    DATASET_REGISTRY
+)
+from xperteval.datasets.dataset_manager import DatasetManager
 from xperteval.utils import get_logger
 
 # 配置日志
 logger = get_logger(__name__)
 
-def test_list_datasets():
-    """测试列出所有可用的数据集"""
-    manager = DatasetManager()
-    datasets = manager.list_available_datasets()
+def test_dataset_registry():
+    """测试数据集注册表"""
+    logger.info("=== 测试数据集注册表 ===")
+    logger.info(f"已注册的数据集类型: {list(DATASET_REGISTRY.keys())}")
     
-    logger.info(f"可用数据集数量: {len(datasets)}")
-    for ds in datasets:
-        logger.info(f"数据集: {ds['id']} - {ds['name']} ({ds['task_type']}, {ds['language']})")
+    # 检查是否包含所有期望的数据集类型
+    expected_types = [
+        "xpert-format", "mmlu", "cmmlu", "gsm8k", "math", 
+        "human_eval", "ceval", "mmbench", "llava_bench", 
+        "seed_bench", "mm_vet"
+    ]
+    
+    all_found = True
+    for expected_type in expected_types:
+        if expected_type not in DATASET_REGISTRY:
+            logger.error(f"缺少数据集类型: {expected_type}")
+            all_found = False
+    
+    if all_found:
+        logger.info("所有期望的数据集类型都已注册")
+    
+    return all_found
+
+def test_scan_datasets(base_dir=None):
+    """测试扫描集成数据集"""
+    logger.info("=== 测试扫描集成数据集 ===")
+    datasets = scan_integrated_datasets(base_dir)
+    logger.info(f"发现 {len(datasets)} 个集成数据集")
+    
+    for dataset_id, info in datasets.items():
+        logger.info(f"数据集: {dataset_id}")
+        logger.info(f"  - 名称: {info['name']}")
+        logger.info(f"  - 类型: {info['type']}")
+        logger.info(f"  - 路径: {info['path']}")
+        logger.info(f"  - 描述: {info['description']}")
+        
+        if info.get('splits'):
+            logger.info(f"  - 分割: {', '.join(info['splits'])}")
+        
+        if info.get('media_dir'):
+            logger.info(f"  - 媒体目录: {info['media_dir']}")
     
     return len(datasets) > 0
 
-def test_dataset_info():
-    """测试获取数据集详细信息"""
+def test_dataset_manager():
+    """测试数据集管理器"""
+    logger.info("=== 测试数据集管理器 ===")
     manager = DatasetManager()
     
-    # 获取第一个数据集的ID
+    # 列出可用数据集
     datasets = manager.list_available_datasets()
+    logger.info(f"配置文件中的数据集数量: {len(datasets)}")
+    
     if not datasets:
-        logger.warning("没有可用的数据集")
+        logger.warning("配置文件中没有数据集")
         return False
     
+    # 选择第一个数据集进行测试
     dataset_id = datasets[0]['id']
-    info = manager.get_dataset_info(dataset_id)
+    logger.info(f"选择数据集 {dataset_id} 进行测试")
     
+    # 获取数据集信息
+    info = manager.get_dataset_info(dataset_id)
     if not info:
         logger.error(f"获取数据集 {dataset_id} 信息失败")
         return False
     
-    logger.info(f"数据集 {dataset_id} 信息:")
-    logger.info(f"  名称: {info.get('name')}")
-    logger.info(f"  描述: {info.get('description')}")
-    logger.info(f"  任务类型: {info.get('task_type')}")
-    logger.info(f"  语言: {info.get('language')}")
-    logger.info(f"  大小: {info.get('size')}")
-    logger.info(f"  本地状态: {info.get('local_status')}")
+    logger.info(f"数据集信息: {json.dumps(info, ensure_ascii=False, indent=2)}")
     
     return True
 
-def test_download_dataset():
-    """测试下载数据集"""
+def test_dataset_split(dataset_id, train_ratio=0.8, dev_ratio=0.1, test_ratio=0.1):
+    """测试数据集分割"""
+    logger.info(f"=== 测试数据集分割: {dataset_id} ===")
     manager = DatasetManager()
     
-    # 获取第一个数据集的ID
-    datasets = manager.list_available_datasets()
-    if not datasets:
-        logger.warning("没有可用的数据集")
+    # 获取数据集
+    dataset = manager.get_dataset(dataset_id, auto_download=False, auto_convert=False)
+    if not dataset:
+        logger.error(f"获取数据集 {dataset_id} 失败")
         return False
     
-    dataset_id = datasets[0]['id']
+    logger.info(f"原始数据集大小: {len(dataset)}")
     
-    # 下载数据集
-    logger.info(f"开始下载数据集 {dataset_id}...")
-    success = manager.download_dataset(dataset_id)
+    # 创建分割
+    success = manager.create_dataset_split(
+        dataset_id, 
+        train_ratio=train_ratio, 
+        dev_ratio=dev_ratio, 
+        test_ratio=test_ratio
+    )
     
-    if success:
-        logger.info(f"数据集 {dataset_id} 下载成功")
-    else:
-        logger.error(f"数据集 {dataset_id} 下载失败")
+    if not success:
+        logger.error(f"创建数据集分割失败")
+        return False
     
-    return success
+    # 加载各个分割
+    splits = ["train", "dev", "test"]
+    for split in splits:
+        split_dataset = manager.get_dataset(dataset_id, split=split)
+        if split_dataset:
+            logger.info(f"{split} 分割大小: {len(split_dataset)}")
+        else:
+            logger.warning(f"加载 {split} 分割失败")
+    
+    return True
 
-def test_convert_dataset():
-    """测试转换数据集"""
+def test_dataset_sample_filter(dataset_id, sample_size=10):
+    """测试数据集采样和过滤"""
+    logger.info(f"=== 测试数据集采样和过滤: {dataset_id} ===")
     manager = DatasetManager()
     
-    # 获取第一个数据集的ID
-    datasets = manager.list_available_datasets()
-    if not datasets:
-        logger.warning("没有可用的数据集")
-        return False
-    
-    dataset_id = datasets[0]['id']
-    
-    # 确保数据集已下载
-    if manager._check_local_status(dataset_id) == "未下载":
-        logger.info(f"数据集 {dataset_id} 尚未下载，先进行下载...")
-        if not manager.download_dataset(dataset_id):
-            logger.error(f"数据集 {dataset_id} 下载失败，无法进行转换测试")
-            return False
-    
-    # 转换数据集
-    logger.info(f"开始转换数据集 {dataset_id}...")
-    success = manager.convert_dataset(dataset_id)
-    
-    if success:
-        logger.info(f"数据集 {dataset_id} 转换成功")
-    else:
-        logger.error(f"数据集 {dataset_id} 转换失败")
-    
-    return success
-
-def test_get_dataset():
-    """测试获取数据集实例"""
-    manager = DatasetManager()
-    
-    # 获取第一个数据集的ID
-    datasets = manager.list_available_datasets()
-    if not datasets:
-        logger.warning("没有可用的数据集")
-        return False
-    
-    dataset_id = datasets[0]['id']
-    
-    # 确保数据集已下载并转换
-    local_status = manager._check_local_status(dataset_id)
-    if local_status == "未下载":
-        logger.info(f"数据集 {dataset_id} 尚未下载，先进行下载和转换...")
-        if not manager.download_dataset(dataset_id) or not manager.convert_dataset(dataset_id):
-            logger.error(f"数据集 {dataset_id} 准备失败，无法获取数据集实例")
-            return False
-    elif local_status == "已下载":
-        logger.info(f"数据集 {dataset_id} 已下载但未转换，先进行转换...")
-        if not manager.convert_dataset(dataset_id):
-            logger.error(f"数据集 {dataset_id} 转换失败，无法获取数据集实例")
-            return False
-    
-    # 获取数据集实例
-    logger.info(f"获取数据集 {dataset_id} 实例...")
+    # 获取原始数据集
     dataset = manager.get_dataset(dataset_id)
-    
-    if dataset is None:
-        logger.error(f"获取数据集 {dataset_id} 实例失败")
+    if not dataset:
+        logger.error(f"获取数据集 {dataset_id} 失败")
         return False
     
-    logger.info(f"成功获取数据集 {dataset_id} 实例")
-    logger.info(f"  样本数量: {len(dataset)}")
+    logger.info(f"原始数据集大小: {len(dataset)}")
     
-    # 获取第一个样本
-    if len(dataset) > 0:
-        sample = dataset[0]
-        logger.info(f"  第一个样本ID: {sample.get('id')}")
-        logger.info(f"  第一个样本问题: {sample.get('query')}")
-    
-    return dataset is not None
-
-def test_auto_download_convert():
-    """测试自动下载和转换数据集"""
-    manager = DatasetManager()
-    
-    # 获取第一个数据集的ID
-    datasets = manager.list_available_datasets()
-    if not datasets:
-        logger.warning("没有可用的数据集")
+    # 测试采样
+    sampled_dataset = manager.get_dataset(dataset_id, sample_size=sample_size)
+    if not sampled_dataset:
+        logger.error(f"采样数据集失败")
         return False
     
-    dataset_id = datasets[0]['id']
+    logger.info(f"采样后数据集大小: {len(sampled_dataset)}")
     
-    # 确保数据集未下载
-    if manager._check_local_status(dataset_id) != "未下载":
-        logger.info(f"删除数据集 {dataset_id} 的本地文件以测试自动下载功能")
-        manager.delete_dataset(dataset_id)
+    # 测试过滤（示例：只保留包含特定关键词的样本）
+    def filter_func(sample):
+        query = sample.get('query', '')
+        return '?' in query  # 只保留问句
     
-    # 测试自动下载和转换
-    logger.info(f"测试自动下载和转换数据集 {dataset_id}...")
-    dataset = manager.get_dataset(dataset_id, auto_download=True, auto_convert=True)
+    filtered_dataset = manager.get_dataset(dataset_id, filter_func=filter_func)
+    if not filtered_dataset:
+        logger.warning(f"过滤后没有剩余样本")
+    else:
+        logger.info(f"过滤后数据集大小: {len(filtered_dataset)}")
     
-    if dataset is None:
-        logger.error(f"自动下载和转换数据集 {dataset_id} 失败")
-        return False
-    
-    logger.info(f"自动下载和转换数据集 {dataset_id} 成功")
     return True
 
 def main():
     """主函数"""
-    logger.info("开始测试数据集管理器")
+    parser = argparse.ArgumentParser(description='测试数据集管理器')
+    parser.add_argument('--test-all', action='store_true', help='运行所有测试')
+    parser.add_argument('--test-registry', action='store_true', help='测试数据集注册表')
+    parser.add_argument('--test-scan', action='store_true', help='测试扫描集成数据集')
+    parser.add_argument('--test-manager', action='store_true', help='测试数据集管理器')
+    parser.add_argument('--test-split', action='store_true', help='测试数据集分割')
+    parser.add_argument('--test-sample-filter', action='store_true', help='测试数据集采样和过滤')
+    parser.add_argument('--dataset-id', help='用于测试的数据集ID')
+    parser.add_argument('--sample-size', type=int, default=10, help='采样大小')
     
-    tests = [
-        ("列出数据集", test_list_datasets),
-        ("获取数据集信息", test_dataset_info),
-        ("下载数据集", test_download_dataset),
-        ("转换数据集", test_convert_dataset),
-        ("获取数据集实例", test_get_dataset),
-        ("自动下载和转换", test_auto_download_convert)
-    ]
+    args = parser.parse_args()
     
-    success_count = 0
-    for name, test_func in tests:
-        logger.info(f"测试 {name}")
-        try:
-            if test_func():
-                logger.info(f"{name} 测试通过")
-                success_count += 1
-            else:
-                logger.error(f"{name} 测试失败")
-        except Exception as e:
-            logger.error(f"{name} 测试失败：{e}")
+    # 如果没有指定任何测试，则运行所有测试
+    if not (args.test_registry or args.test_scan or args.test_manager or 
+            args.test_split or args.test_sample_filter):
+        args.test_all = True
     
-    logger.info(f"测试完成，共 {len(tests)} 项测试，通过 {success_count} 项")
+    # 运行测试
+    results = {}
     
-    return success_count == len(tests)
+    if args.test_all or args.test_registry:
+        results['registry'] = test_dataset_registry()
+    
+    if args.test_all or args.test_scan:
+        results['scan'] = test_scan_datasets()
+    
+    if args.test_all or args.test_manager:
+        results['manager'] = test_dataset_manager()
+    
+    if args.test_all or args.test_split:
+        if args.dataset_id:
+            results['split'] = test_dataset_split(args.dataset_id)
+        else:
+            logger.warning("未指定数据集ID，跳过分割测试")
+    
+    if args.test_all or args.test_sample_filter:
+        if args.dataset_id:
+            results['sample_filter'] = test_dataset_sample_filter(args.dataset_id, args.sample_size)
+        else:
+            logger.warning("未指定数据集ID，跳过采样和过滤测试")
+    
+    # 输出结果
+    logger.info("=== 测试结果 ===")
+    all_success = True
+    for test_name, success in results.items():
+        logger.info(f"{test_name}: {'成功' if success else '失败'}")
+        if not success:
+            all_success = False
+    
+    return 0 if all_success else 1
 
-if __name__ == "__main__":
-    success = main()
-    sys.exit(0 if success else 1) 
+if __name__ == '__main__':
+    sys.exit(main()) 

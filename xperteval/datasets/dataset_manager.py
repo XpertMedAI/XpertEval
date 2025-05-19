@@ -9,7 +9,7 @@ import json
 import shutil
 import logging
 from pathlib import Path
-from typing import Dict, Any, List, Union, Optional, Tuple
+from typing import Dict, Any, List, Union, Optional, Tuple, Callable
 import subprocess
 import requests
 from tqdm import tqdm
@@ -310,7 +310,9 @@ class DatasetManager:
             return False
     
     def get_dataset(self, dataset_id: str, auto_download: bool = False, 
-                  auto_convert: bool = False) -> Optional[BaseDataset]:
+                  auto_convert: bool = False, split: Optional[str] = None,
+                  sample_size: Optional[int] = None, 
+                  filter_func: Optional[Callable[[Dict[str, Any]], bool]] = None) -> Optional[BaseDataset]:
         """
         获取指定数据集的实例
         
@@ -318,6 +320,9 @@ class DatasetManager:
             dataset_id: 数据集ID
             auto_download: 如果数据集不存在，是否自动下载
             auto_convert: 如果数据集未转换，是否自动转换
+            split: 数据集分割，如"train", "dev", "test"
+            sample_size: 采样大小，如果指定，将随机采样指定数量的样本
+            filter_func: 过滤函数，接收样本字典，返回布尔值表示是否保留
             
         Returns:
             数据集实例，如果获取失败则返回None
@@ -352,7 +357,19 @@ class DatasetManager:
         
         # 获取数据集路径
         local_path = dataset_info.get("local_path", "")
-        dataset_path = self.project_root / local_path / "dataset.jsonl"
+        
+        # 处理分割
+        dataset_path = None
+        if split:
+            split_file = self.project_root / local_path / f"{split}.jsonl"
+            if split_file.exists():
+                dataset_path = split_file
+            else:
+                logger.warning(f"数据集 {dataset_id} 的 {split} 分割文件不存在: {split_file}")
+        
+        # 如果没有找到分割文件，使用默认数据集文件
+        if not dataset_path:
+            dataset_path = self.project_root / local_path / "dataset.jsonl"
         
         # 检查文件是否存在
         if not dataset_path.exists():
@@ -368,9 +385,91 @@ class DatasetManager:
         
         # 创建数据集实例
         try:
-            return XpertFormatDataset(str(dataset_path), media_dir=str(media_dir) if media_dir else None)
+            dataset = XpertFormatDataset(str(dataset_path), media_dir=str(media_dir) if media_dir else None)
+            
+            # 应用过滤
+            if filter_func:
+                filtered_dataset = self._filter_dataset(dataset, filter_func)
+                if filtered_dataset is not None:
+                    dataset = filtered_dataset
+                    logger.info(f"已过滤数据集 {dataset_id}，保留 {len(dataset)} 个样本")
+            
+            # 应用采样
+            if sample_size and sample_size > 0 and sample_size < len(dataset):
+                sampled_dataset = self._sample_dataset(dataset, sample_size)
+                if sampled_dataset is not None:
+                    dataset = sampled_dataset
+                    logger.info(f"已从数据集 {dataset_id} 中采样 {sample_size} 个样本")
+            
+            return dataset
+            
         except Exception as e:
             logger.error(f"创建数据集 {dataset_id} 实例失败: {e}")
+            return None
+    
+    def _filter_dataset(self, dataset: BaseDataset, 
+                        filter_func: Callable[[Dict[str, Any]], bool]) -> Optional[BaseDataset]:
+        """
+        过滤数据集
+        
+        Args:
+            dataset: 原始数据集
+            filter_func: 过滤函数，接收样本字典，返回布尔值表示是否保留
+            
+        Returns:
+            过滤后的数据集，如果过滤失败则返回None
+        """
+        try:
+            # 过滤数据
+            filtered_data = [sample for sample in dataset.data if filter_func(sample)]
+            
+            if not filtered_data:
+                logger.warning("过滤后没有剩余样本")
+                return None
+            
+            # 创建新的数据集实例
+            new_dataset = type(dataset)(dataset.dataset_path)
+            new_dataset.data = filtered_data
+            
+            return new_dataset
+            
+        except Exception as e:
+            logger.error(f"过滤数据集失败: {e}")
+            return None
+    
+    def _sample_dataset(self, dataset: BaseDataset, sample_size: int) -> Optional[BaseDataset]:
+        """
+        从数据集中随机采样
+        
+        Args:
+            dataset: 原始数据集
+            sample_size: 采样大小
+            
+        Returns:
+            采样后的数据集，如果采样失败则返回None
+        """
+        try:
+            import random
+            
+            # 确保采样大小有效
+            sample_size = min(sample_size, len(dataset))
+            
+            if sample_size <= 0:
+                logger.warning("采样大小必须大于0")
+                return None
+            
+            # 随机采样
+            sampled_indices = random.sample(range(len(dataset)), sample_size)
+            sampled_data = [dataset.data[i] for i in sampled_indices]
+            
+            # 创建新的数据集实例
+            new_dataset = type(dataset)(dataset.dataset_path)
+            new_dataset.data = sampled_data
+            
+            return new_dataset
+            
+        except Exception as e:
+            logger.error(f"采样数据集失败: {e}")
             return None
     
     def get_dataset_info(self, dataset_id: str) -> Optional[Dict[str, Any]]:
@@ -450,4 +549,115 @@ class DatasetManager:
             return True
         except Exception as e:
             logger.error(f"删除数据集 {dataset_id} 失败: {e}")
+            return False
+    
+    def create_dataset_split(self, dataset_id: str, train_ratio: float = 0.8, 
+                            dev_ratio: float = 0.1, test_ratio: float = 0.1,
+                            shuffle: bool = True, seed: int = 42) -> bool:
+        """
+        创建数据集分割（训练/验证/测试）
+        
+        Args:
+            dataset_id: 数据集ID
+            train_ratio: 训练集比例，默认为0.8
+            dev_ratio: 验证集比例，默认为0.1
+            test_ratio: 测试集比例，默认为0.1
+            shuffle: 是否打乱数据，默认为True
+            seed: 随机种子，默认为42
+            
+        Returns:
+            布尔值，表示分割是否成功
+        """
+        # 验证比例和
+        if abs(train_ratio + dev_ratio + test_ratio - 1.0) > 1e-6:
+            logger.error(f"分割比例之和必须等于1.0，当前为 {train_ratio + dev_ratio + test_ratio}")
+            return False
+        
+        dataset_info = self.config.get("datasets", {}).get(dataset_id)
+        if not dataset_info:
+            logger.error(f"未找到数据集配置: {dataset_id}")
+            return False
+        
+        # 获取数据集
+        dataset = self.get_dataset(dataset_id, auto_download=False, auto_convert=False)
+        if not dataset:
+            logger.error(f"获取数据集 {dataset_id} 失败")
+            return False
+        
+        # 获取数据集路径
+        local_path = dataset_info.get("local_path", "")
+        local_dir = self.project_root / local_path
+        
+        try:
+            import random
+            
+            # 设置随机种子
+            random.seed(seed)
+            
+            # 获取所有样本
+            all_samples = dataset.data
+            
+            # 打乱数据
+            if shuffle:
+                random.shuffle(all_samples)
+            
+            # 计算分割点
+            total_size = len(all_samples)
+            train_size = int(total_size * train_ratio)
+            dev_size = int(total_size * dev_ratio)
+            
+            # 分割数据
+            train_data = all_samples[:train_size]
+            dev_data = all_samples[train_size:train_size + dev_size]
+            test_data = all_samples[train_size + dev_size:]
+            
+            # 保存分割后的数据集
+            splits = {
+                "train": train_data,
+                "dev": dev_data,
+                "test": test_data
+            }
+            
+            for split_name, split_data in splits.items():
+                if not split_data:  # 跳过空分割
+                    continue
+                    
+                output_path = local_dir / f"{split_name}.jsonl"
+                
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    for sample in split_data:
+                        f.write(json.dumps(sample, ensure_ascii=False) + '\n')
+                
+                logger.info(f"已保存 {split_name} 分割，共 {len(split_data)} 个样本: {output_path}")
+            
+            # 更新配置文件中的分割信息
+            if "splits" not in dataset_info:
+                dataset_info["splits"] = []
+                
+            for split_name in splits.keys():
+                if split_name not in dataset_info["splits"]:
+                    dataset_info["splits"].append(split_name)
+            
+            # 保存更新后的配置
+            self._save_config()
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"创建数据集分割失败: {e}")
+            return False
+    
+    def _save_config(self) -> bool:
+        """
+        保存数据集配置
+        
+        Returns:
+            布尔值，表示保存是否成功
+        """
+        try:
+            with open(self.config_path, 'w', encoding='utf-8') as f:
+                json.dump(self.config, f, ensure_ascii=False, indent=2)
+            return True
+        except Exception as e:
+            logger.error(f"保存数据集配置失败: {e}")
             return False 
