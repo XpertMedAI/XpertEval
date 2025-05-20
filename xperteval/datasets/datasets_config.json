@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-05-19",
+  "last_updated": "2025-05-20",
   "datasets": {
     "mmlu": {
       "name": "MMLU (Massive Multitask Language Understanding)",
@@ -12,12 +12,12 @@
       "language": "en",
       "citation": "Hendrycks et al., 2020",
       "license": "MIT",
-      "size": "15,908 questions",
+      "size": "115,700 questions",
       "formats": {
-        "original": "csv",
+        "original": "json",
         "xpert_format": "jsonl"
       },
-      "converter": "mmlu_to_xpert"
+      "converter": "convert_mmlu_to_xpert"
     },
     "cmmlu": {
       "name": "CMMLU (Chinese Massive Multitask Language Understanding)",
@@ -28,13 +28,13 @@
       "task_type": "choice",
       "language": "zh",
       "citation": "Li et al., 2023",
-      "license": "Apache 2.0",
-      "size": "11,985 questions",
+      "license": "CC BY-NC 4.0",
+      "size": "11,917 questions",
       "formats": {
         "original": "csv",
         "xpert_format": "jsonl"
       },
-      "converter": "cmmlu_to_xpert"
+      "converter": "convert_cmmlu_to_xpert"
     },
     "gsm8k": {
       "name": "GSM8K (Grade School Math 8K)",
@@ -46,12 +46,12 @@
       "language": "en",
       "citation": "Cobbe et al., 2021",
       "license": "MIT",
-      "size": "8,500 problems",
+      "size": "8,792 problems",
       "formats": {
         "original": "json",
         "xpert_format": "jsonl"
       },
-      "converter": "gsm8k_to_xpert"
+      "converter": "convert_gsm8k_to_xpert"
     },
     "human_eval": {
       "name": "HumanEval",
@@ -69,10 +69,10 @@
         "original": "json",
         "xpert_format": "jsonl"
       },
-      "converter": "human_eval_to_xpert"
+      "converter": "convert_humaneval_to_xpert"
     },
     "ceval": {
-      "name": "C-Eval",
+      "name": "CEval",
       "description": "中文评测集，包含多个领域的选择题",
       "huggingface_url": "https://huggingface.co/datasets/ceval/ceval-exam",
       "modelscope_url": null,
@@ -86,8 +86,14 @@
         "original": "json",
         "xpert_format": "jsonl"
       },
-      "converter": "ceval_to_xpert"
+      "converter": "convert_ceval_to_xpert"
     },
+
+
+
+
+
+
     "mmbench": {
       "name": "MMBench",
       "description": "视觉-语言理解任务，需要模型理解图像内容并回答问题",

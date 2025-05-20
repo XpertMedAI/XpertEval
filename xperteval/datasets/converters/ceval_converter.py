@@ -1,45 +1,37 @@
 # coding: utf-8
 """
-MMLU (Massive Multitask Language Understanding) 数据集转换器
+CEval (Chinese Evaluation) 数据集转换器
 
-将MMLU格式的数据集转换为XpertFormat格式。
-支持从Hugging Face下载的parquet文件和原始CSV文件的转换。
+将CEval格式的数据集转换为XpertFormat格式。
+支持从Hugging Face下载的parquet文件转换。
 
 用法:
     # 导入转换器
-    from xperteval.datasets.converters import convert_mmlu_to_xpert
+    from xperteval.datasets.converters import convert_ceval_to_xpert
     
     # 转换单个parquet文件
-    convert_mmlu_to_xpert("data/downloads/mmlu/abstract_algebra/test-00000-of-00001.parquet", 
-                        "data/integrated/mmlu/abstract_algebra_test.jsonl")
+    convert_ceval_to_xpert("data/downloads/ceval/high_school_mathematics/test-00000-of-00001.parquet", 
+                          "data/integrated/ceval/high_school_mathematics_test.jsonl")
                         
     # 转换一个学科的所有测试数据
-    convert_mmlu_to_xpert("data/downloads/mmlu/abstract_algebra", 
-                        "data/integrated/mmlu/abstract_algebra.jsonl", 
-                        split="test")
+    convert_ceval_to_xpert("data/downloads/ceval/high_school_mathematics", 
+                          "data/integrated/ceval/high_school_mathematics.jsonl", 
+                          split="test")
                         
-    # 转换整个MMLU数据集的测试集
-    convert_mmlu_to_xpert("data/downloads/mmlu", 
-                        "data/integrated/mmlu/dataset.jsonl", 
-                        split="test")
+    # 转换整个CEval数据集的测试集
+    convert_ceval_to_xpert("data/downloads/ceval", 
+                          "data/integrated/ceval/dataset.jsonl", 
+                          split="test")
 
 命令行使用:
     # 转换单个parquet文件
-    python -m xperteval.datasets.converters.mmlu_converter --source path/to/file.parquet --output path/to/output.jsonl
+    python -m xperteval.datasets.converters.ceval_converter --source data/downloads/ceval/high_school_mathematics/test-00000-of-00001.parquet --output data/integrated/ceval/high_school_mathematics_test.jsonl
     
     # 转换一个学科的所有测试数据
-    python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/abstract_algebra --output data/integrated/mmlu/abstract_algebra.jsonl --split test
+    python -m xperteval.datasets.converters.ceval_converter --source data/downloads/ceval/high_school_mathematics --output data/integrated/ceval/high_school_mathematics.jsonl --split test
     
-    # 转换整个MMLU数据集的测试集、开发集、验证集（请注意，source需要指定到mmlu/all目录，否则会出现重复）
-    python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/all --output data/integrated/mmlu/dataset_test.jsonl --split test
-    python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/all --output data/integrated/mmlu/dataset_dev.jsonl --split dev
-    python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/all --output data/integrated/mmlu/dataset_validation.jsonl --split validation
-
-    # 转换辅助训练集
-    python -m xperteval.datasets.converters.mmlu_converter --source data/downloads/mmlu/auxiliary_train --output data/integrated/mmlu/dataset_auxiliary_train.jsonl --split train
-
-备注：
-    1. 请先通过命令“git clone https://huggingface.co/datasets/cais/mmlu.git -o data/downloads”将原测试集下载到本地；
+    # 转换整个CEval数据集的测试集
+    python -m xperteval.datasets.converters.ceval_converter --source data/downloads/ceval --output data/integrated/ceval/dataset.jsonl --split test
 """
 
 import os
@@ -47,32 +39,42 @@ import sys
 import json
 import argparse
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Union, Tuple
-import glob
 
-from ..base_dataset import BaseDataset
-from ...utils import get_logger
-from .format_validator import validate_xpert_format
+# 添加项目根目录到路径以便直接执行脚本
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(script_dir, '..', '..', '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# 根据执行方式选择合适的导入方式
+if __name__ == '__main__':
+    # 直接执行脚本时使用绝对导入
+    from xperteval.utils import get_logger
+    from xperteval.datasets.converters.format_validator import validate_xpert_format
+else:
+    # 作为模块导入时使用相对导入
+    from ...utils import get_logger
+    from .format_validator import validate_xpert_format
 
 # 配置日志
 logger = get_logger(__name__)
 
-def convert_mmlu_parquet_to_xpert(source_dir: str, output_path: str, split: str = 'test', validate: bool = True) -> bool:
+def convert_ceval_parquet_to_xpert(source_dir: str, output_path: str, split: str = 'test', validate: bool = True) -> bool:
     """
-    将从Hugging Face下载的MMLU数据集的parquet文件转换为XpertFormat格式
+    将从Hugging Face下载的CEval数据集的parquet文件转换为XpertFormat格式
     
     Args:
         source_dir: 数据集目录路径，可以是直接包含parquet文件的目录，也可以包含多个学科子目录
         output_path: 输出文件路径
-        split: 数据集分割，如'test', 'validation', 'dev'等
+        split: 数据集分割，如'test', 'val', 'dev'等
         validate: 是否验证转换后的数据格式
         
     Returns:
         布尔值，表示转换是否成功
     """
-    logger.info(f"开始将MMLU数据集从parquet格式转换为XpertFormat格式...")
+    logger.info(f"开始将CEval数据集从parquet格式转换为XpertFormat格式...")
     
     # 将路径字符串转换为Path对象，便于后续操作
     source_dir = Path(source_dir)
@@ -175,107 +177,55 @@ def process_parquet_file(parquet_file: Path, subject_name: str = None) -> List[D
         # 使用pandas读取parquet文件
         df = pd.read_parquet(parquet_file)
         
-        # 检查是否是辅助训练集特殊格式（只有一列'train'包含嵌套字典）
-        if len(df.columns) == 1 and 'train' in df.columns:
-            logger.info(f"检测到辅助训练集特殊格式数据")
-            # 逐行处理嵌套字典数据
-            for i, row in df.iterrows():
-                # 提取嵌套字典
-                nested_data = row['train']
-                
-                # 提取数据字段
-                question = nested_data.get('question', '')
-                # 优先使用嵌套数据中的subject字段，如果没有则使用传入的subject_name，如果都没有则使用'unknown'
-                nested_subject = nested_data.get('subject', '')
-                subject = nested_subject if nested_subject else (subject_name if subject_name else 'unknown')
-                choices = nested_data.get('choices', [])
-                answer = nested_data.get('answer', None)
-                
-                # 处理choices字段，确保格式正确
-                # choices可能是numpy数组或普通列表
-                if isinstance(choices, np.ndarray):
-                    choice_options = choices.tolist()
-                elif isinstance(choices, list):
-                    choice_options = choices
-                else:
-                    logger.warning(f"未知的choices格式: {type(choices)}")
-                    continue
-                
-                # 确保至少有4个选项
-                if len(choice_options) < 4:
-                    logger.warning(f"选项不足4个: {choice_options}")
-                    continue
-                
-                # 创建符合XpertFormat规范的样本
-                sample = {
-                    "id": f"mmlu_{subject}_{i}",  # 创建唯一ID
-                    "query": question,            # 问题文本
-                    "choices": [                  # 选项列表
-                        {"id": "A", "content": str(choice_options[0])},
-                        {"id": "B", "content": str(choice_options[1])},
-                        {"id": "C", "content": str(choice_options[2])},
-                        {"id": "D", "content": str(choice_options[3])}
-                    ],
-                    "meta": {                     # 元数据
-                        "task_type": "choice",
-                        "subject": subject,
-                        "source": "MMLU"
-                    }
-                }
-                
-                # 只有答案存在时才添加
-                if answer is not None:
-                    sample["answer"] = {
-                        "type": "choice",
-                        "value": "ABCD"[answer] if isinstance(answer, int) else answer,  # 将数字索引(0,1,2,3)转换为选项字母(A,B,C,D)
-                        "explanation": None
-                    }
-                
-                data.append(sample)
-        else:
-            # 标准MMLU格式处理
-            # 逐行处理数据并转换为XpertFormat
-            for i, row in df.iterrows():
-                # 提取数据字段
-                question = row['question']
-                # 优先使用行数据中的subject字段，如果没有则使用传入的subject_name，如果都没有则使用'unknown'
-                subject = row.get('subject', subject_name) if subject_name else row.get('subject', 'unknown')
-                choices = row['choices']
+        # 逐行处理数据并转换为XpertFormat
+        for i, row in df.iterrows():
+            # 提取数据字段
+            question = row['question']
+            options = {
+                'A': row['A'],
+                'B': row['B'],
+                'C': row['C'],
+                'D': row['D']
+            }
+            
+            # 检查是否有有效的答案字段（不是None、不是空字符串）
+            answer = None
+            if 'answer' in row and row['answer'] is not None and row['answer'] != '':
                 answer = row['answer']
-                
-                # 处理choices字段，确保格式正确
-                # choices可能是numpy数组或普通列表
-                if isinstance(choices, np.ndarray):
-                    choice_options = choices.tolist()
-                elif isinstance(choices, list):
-                    choice_options = choices
-                else:
-                    logger.warning(f"未知的choices格式: {type(choices)}")
-                    continue
-                
-                # 创建符合XpertFormat规范的样本
-                sample = {
-                    "id": f"mmlu_{subject}_{i}",  # 创建唯一ID
-                    "query": question,            # 问题文本
-                    "choices": [                  # 选项列表
-                        {"id": "A", "content": str(choice_options[0])},
-                        {"id": "B", "content": str(choice_options[1])},
-                        {"id": "C", "content": str(choice_options[2])},
-                        {"id": "D", "content": str(choice_options[3])}
-                    ],
-                    "answer": {                   # 答案信息
-                        "type": "choice",
-                        "value": "ABCD"[answer],  # 将数字索引(0,1,2,3)转换为选项字母(A,B,C,D)
-                        "explanation": None
-                    },
-                    "meta": {                     # 元数据
-                        "task_type": "choice",
-                        "subject": subject,
-                        "source": "MMLU"
-                    }
+            
+            # 检查是否有有效的解释字段（不是None、不是空字符串）
+            explanation = None
+            if 'explanation' in row and row['explanation'] is not None and row['explanation'] != '':
+                explanation = row['explanation']
+            
+            # 创建符合XpertFormat规范的样本
+            sample = {
+                "id": f"ceval_{subject_name}_{i}",  # 创建唯一ID
+                "query": question,                 # 问题文本
+                "choices": [                       # 选项列表
+                    {"id": "A", "content": options['A']},
+                    {"id": "B", "content": options['B']},
+                    {"id": "C", "content": options['C']},
+                    {"id": "D", "content": options['D']}
+                ],
+                "meta": {                          # 元数据
+                    "task_type": "choice",
+                    "subject": subject_name,
+                    "source": "CEval"
                 }
-                
-                data.append(sample)
+            }
+            
+            # 只有当答案是有效值时，才添加答案字段
+            if answer:
+                sample["answer"] = {
+                    "type": "choice",
+                    "value": answer
+                }
+                # 如果存在解释，添加到答案字段
+                if explanation:
+                    sample["answer"]["explanation"] = explanation
+            
+            data.append(sample)
         
         logger.info(f"从 {parquet_file} 成功转换了 {len(df)} 个样本")
         return data
@@ -284,9 +234,9 @@ def process_parquet_file(parquet_file: Path, subject_name: str = None) -> List[D
         logger.error(f"处理文件 {parquet_file} 时出错: {e}")
         return []
 
-def convert_single_mmlu_parquet(parquet_file: str, output_path: str, validate: bool = True) -> bool:
+def convert_single_ceval_parquet(parquet_file: str, output_path: str, validate: bool = True) -> bool:
     """
-    转换单个MMLU parquet文件到XpertFormat
+    转换单个CEval parquet文件到XpertFormat
     
     Args:
         parquet_file: parquet文件路径
@@ -296,7 +246,7 @@ def convert_single_mmlu_parquet(parquet_file: str, output_path: str, validate: b
     Returns:
         布尔值，表示转换是否成功
     """
-    logger.info(f"开始转换单个MMLU parquet文件: {parquet_file}")
+    logger.info(f"开始转换单个CEval parquet文件: {parquet_file}")
     
     try:
         # 从文件路径提取学科名称
@@ -340,11 +290,11 @@ def convert_single_mmlu_parquet(parquet_file: str, output_path: str, validate: b
         logger.error(f"转换失败: {e}")
         return False
 
-def convert_mmlu_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
+def convert_ceval_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
     """
-    将MMLU数据集转换为XpertFormat格式
+    将CEval数据集转换为XpertFormat格式
     
-    支持转换原始CSV文件和从Hugging Face下载的parquet文件
+    支持转换从Hugging Face下载的parquet文件
     
     Args:
         source_path: 数据集文件或目录路径
@@ -364,7 +314,7 @@ def convert_mmlu_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
     
     # 检查是否是parquet文件
     if source_path.is_file() and source_path.suffix.lower() == '.parquet':
-        return convert_single_mmlu_parquet(str(source_path), output_path, validate=validate)
+        return convert_single_ceval_parquet(str(source_path), output_path, validate=validate)
     
     # 检查是否是包含parquet文件的目录
     elif source_path.is_dir():
@@ -372,13 +322,13 @@ def convert_mmlu_to_xpert(source_path: str, output_path: str, **kwargs) -> bool:
         if subject:
             subject_dir = source_path / subject
             if subject_dir.exists() and subject_dir.is_dir():
-                return convert_mmlu_parquet_to_xpert(str(subject_dir), output_path, split, validate=validate)
+                return convert_ceval_parquet_to_xpert(str(subject_dir), output_path, split, validate=validate)
             else:
                 logger.error(f"未找到学科目录: {subject_dir}")
                 return False
         
         # 处理整个目录
-        return convert_mmlu_parquet_to_xpert(str(source_path), output_path, split, validate=validate)
+        return convert_ceval_parquet_to_xpert(str(source_path), output_path, split, validate=validate)
     
     else:
         logger.error(f"不支持的数据源: {source_path}")
@@ -388,15 +338,15 @@ def main():
     """
     命令行入口函数
     
-    支持通过命令行参数转换MMLU数据集
+    支持通过命令行参数转换CEval数据集
     
     用法：
-        python -m xperteval.datasets.converters.mmlu_converter --source <source_path> --output <output_path> [--split <split>] [--subject <subject>] [--no-validate]
+        python -m xperteval.datasets.converters.ceval_converter --source <source_path> --output <output_path> [--split <split>] [--subject <subject>] [--no-validate]
     """
-    parser = argparse.ArgumentParser(description='将MMLU数据集转换为XpertFormat格式')
+    parser = argparse.ArgumentParser(description='将CEval数据集转换为XpertFormat格式')
     parser.add_argument('--source', required=True, help='源数据目录或文件路径')
     parser.add_argument('--output', required=True, help='输出文件路径')
-    parser.add_argument('--split', default='test', help='数据集分割(test/validation/dev)')
+    parser.add_argument('--split', default='test', help='数据集分割(test/val/dev)')
     parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
     parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
@@ -413,7 +363,7 @@ def main():
     
     if source_path.is_file() and source_path.suffix.lower() == '.parquet':
         logger.info(f"转换单个parquet文件: {source_path}")
-        success = convert_single_mmlu_parquet(str(source_path), args.output, validate=not args.no_validate)
+        success = convert_single_ceval_parquet(str(source_path), args.output, validate=not args.no_validate)
     elif source_path.is_dir():
         params = {
             "split": args.split,
@@ -424,7 +374,7 @@ def main():
             logger.info(f"转换特定学科: {args.subject}, 分割: {args.split}")
         else:
             logger.info(f"转换目录: {source_path}, 分割: {args.split}")
-        success = convert_mmlu_to_xpert(str(source_path), args.output, **params)
+        success = convert_ceval_to_xpert(str(source_path), args.output, **params)
     else:
         logger.error(f"不支持的源路径: {source_path}")
         return 1
@@ -436,5 +386,11 @@ def main():
         logger.error("转换失败")
         return 1
 
+# 直接调用main的入口点，避免使用模块导入方式
+def run_cli():
+    """直接执行命令行，避免通过python -m方式导入"""
+    sys.exit(main())
+
+# 这种方式避免模块被其他模块导入时就执行main函数
 if __name__ == "__main__":
-    sys.exit(main()) 
+    run_cli() 

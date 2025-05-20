@@ -18,6 +18,9 @@
     
     # 转换HumanEval数据集
     python scripts/convert_dataset.py humaneval --source data/downloads/humaneval/openai_humaneval/test-00000-of-00001.parquet --output data/integrated/humaneval/humaneval.jsonl
+    
+    # 转换CEval数据集
+    python scripts/convert_dataset.py ceval --source data/downloads/ceval/high_school_mathematics --output data/integrated/ceval/high_school_mathematics.jsonl --split test
 """
 
 import os
@@ -33,7 +36,8 @@ from xperteval.datasets.converters import (
     convert_mmlu_to_xpert,
     convert_cmmlu_to_xpert,
     convert_gsm8k_to_xpert,
-    convert_humaneval_to_xpert
+    convert_humaneval_to_xpert,
+    convert_ceval_to_xpert
 )
 from xperteval.utils import get_logger
 
@@ -59,6 +63,12 @@ def main():
   
   # 转换HumanEval数据集
   python scripts/convert_dataset.py humaneval --source data/downloads/humaneval/openai_humaneval/test-00000-of-00001.parquet --output data/integrated/humaneval/humaneval.jsonl
+  
+  # 转换CEval数据集
+  python scripts/convert_dataset.py ceval --source data/downloads/ceval/high_school_mathematics --output data/integrated/ceval/high_school_mathematics.jsonl --split test
+  
+  # 转换整个CEval数据集
+  python scripts/convert_dataset.py ceval --source data/downloads/ceval --output data/integrated/ceval/dataset.jsonl --split test
 """
     )
     
@@ -94,6 +104,14 @@ def main():
     humaneval_parser.add_argument('--source', required=True, help='源数据文件路径')
     humaneval_parser.add_argument('--output', required=True, help='输出文件路径')
     humaneval_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
+    
+    # CEval解析器
+    ceval_parser = subparsers.add_parser('ceval', help='转换CEval数据集')
+    ceval_parser.add_argument('--source', required=True, help='源数据目录或文件路径')
+    ceval_parser.add_argument('--output', required=True, help='输出文件路径')
+    ceval_parser.add_argument('--split', default='test', help='数据集分割(test/val/dev)')
+    ceval_parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
+    ceval_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
     # 解析命令行参数
     args = parser.parse_args()
@@ -146,6 +164,16 @@ def main():
     elif args.dataset_type == 'humaneval':
         logger.info(f"转换HumanEval数据集: {args.source}")
         success = convert_humaneval_to_xpert(args.source, args.output, validate=validate)
+    
+    elif args.dataset_type == 'ceval':
+        params = {
+            "split": args.split,
+            "validate": validate
+        }
+        if args.subject:
+            params["subject"] = args.subject
+        logger.info(f"转换CEval数据集: {args.source}")
+        success = convert_ceval_to_xpert(args.source, args.output, **params)
     
     # 输出结果
     if success:

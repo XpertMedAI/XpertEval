@@ -13,6 +13,7 @@ from .mmlu_converter import convert_mmlu_to_xpert
 from .cmmlu_converter import convert_cmmlu_to_xpert
 from .gsm8k_converter import convert_gsm8k_to_xpert
 from .humaneval_converter import convert_humaneval_to_xpert
+from .ceval_converter import convert_ceval_to_xpert
 
 # 定义占位函数，用于尚未实现的转换器
 def _not_implemented(*args, **kwargs):
@@ -20,7 +21,6 @@ def _not_implemented(*args, **kwargs):
 
 # 为尚未实现的转换器提供占位函数
 convert_math_to_xpert = _not_implemented
-convert_ceval_to_xpert = _not_implemented
 convert_mmbench_to_xpert = _not_implemented
 convert_llava_bench_to_xpert = _not_implemented
 convert_seed_bench_to_xpert = _not_implemented
