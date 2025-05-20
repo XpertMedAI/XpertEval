@@ -21,6 +21,18 @@
     
     # 转换CEval数据集
     python scripts/convert_dataset.py ceval --source data/downloads/ceval/high_school_mathematics --output data/integrated/ceval/high_school_mathematics.jsonl --split test
+    
+    # 转换MMBench数据集
+    python scripts/convert_dataset.py mmbench --source data/downloads/mmbench/MMBench_TEST_EN_legacy.tsv --output data/integrated/mmbench/mmbench_test_en.jsonl
+    
+    # 转换整个MMBench目录
+    python scripts/convert_dataset.py mmbench --source data/downloads/mmbench --output data/integrated/mmbench/mmbench_all.jsonl
+    
+    # 转换GMAI-MMBench数据集
+    python scripts/convert_dataset.py gmaimmbench --source data/downloads/gmaimmbench/GMAI_mm_bench_VAL.tsv --output data/integrated/gmaimmbench/gmaimmbench_val.jsonl
+    
+    # 转换整个GMAI-MMBench目录
+    python scripts/convert_dataset.py gmaimmbench --source data/downloads/gmaimmbench --output data/integrated/gmaimmbench/gmaimmbench_all.jsonl
 """
 
 import os
@@ -37,7 +49,9 @@ from xperteval.datasets.converters import (
     convert_cmmlu_to_xpert,
     convert_gsm8k_to_xpert,
     convert_humaneval_to_xpert,
-    convert_ceval_to_xpert
+    convert_ceval_to_xpert,
+    convert_mmbench_to_xpert,
+    convert_gmaimmbench_to_xpert
 )
 from xperteval.utils import get_logger
 
@@ -69,6 +83,18 @@ def main():
   
   # 转换整个CEval数据集
   python scripts/convert_dataset.py ceval --source data/downloads/ceval --output data/integrated/ceval/dataset.jsonl --split test
+  
+  # 转换单个MMBench文件
+  python scripts/convert_dataset.py mmbench --source data/downloads/mmbench/MMBench_TEST_EN_legacy.tsv --output data/integrated/mmbench/mmbench_test_en.jsonl
+  
+  # 转换整个MMBench目录
+  python scripts/convert_dataset.py mmbench --source data/downloads/mmbench --output data/integrated/mmbench/mmbench_all.jsonl
+  
+  # 转换单个GMAI-MMBench文件
+  python scripts/convert_dataset.py gmaimmbench --source data/downloads/gmaimmbench/GMAI_mm_bench_VAL.tsv --output data/integrated/gmaimmbench/gmaimmbench_val.jsonl
+  
+  # 转换整个GMAI-MMBench目录
+  python scripts/convert_dataset.py gmaimmbench --source data/downloads/gmaimmbench --output data/integrated/gmaimmbench/gmaimmbench_all.jsonl
 """
     )
     
@@ -112,6 +138,18 @@ def main():
     ceval_parser.add_argument('--split', default='test', help='数据集分割(test/val/dev)')
     ceval_parser.add_argument('--subject', help='学科名称，如果指定则只转换该学科')
     ceval_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
+    
+    # MMBench解析器
+    mmbench_parser = subparsers.add_parser('mmbench', help='转换MMBench数据集')
+    mmbench_parser.add_argument('--source', required=True, help='源TSV文件或目录路径')
+    mmbench_parser.add_argument('--output', required=True, help='输出文件路径')
+    mmbench_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
+    
+    # GMAI-MMBench解析器
+    gmaimmbench_parser = subparsers.add_parser('gmaimmbench', help='转换GMAI-MMBench数据集')
+    gmaimmbench_parser.add_argument('--source', required=True, help='源TSV文件或目录路径')
+    gmaimmbench_parser.add_argument('--output', required=True, help='输出文件路径')
+    gmaimmbench_parser.add_argument('--no-validate', action='store_true', help='跳过数据格式验证')
     
     # 解析命令行参数
     args = parser.parse_args()
@@ -174,6 +212,14 @@ def main():
             params["subject"] = args.subject
         logger.info(f"转换CEval数据集: {args.source}")
         success = convert_ceval_to_xpert(args.source, args.output, **params)
+    
+    elif args.dataset_type == 'mmbench':
+        logger.info(f"转换MMBench数据集: {args.source}")
+        success = convert_mmbench_to_xpert(args.source, args.output, validate=validate)
+    
+    elif args.dataset_type == 'gmaimmbench':
+        logger.info(f"转换GMAI-MMBench数据集: {args.source}")
+        success = convert_gmaimmbench_to_xpert(args.source, args.output, validate=validate)
     
     # 输出结果
     if success:

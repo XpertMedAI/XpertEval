@@ -6,6 +6,7 @@
       "name": "MMLU (Massive Multitask Language Understanding)",
       "description": "包含57个学科领域的多选题评测集，测试模型的知识广度",
       "huggingface_url": "https://huggingface.co/datasets/cais/mmlu",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/mmlu",
       "task_type": "choice",
@@ -23,6 +24,7 @@
       "name": "CMMLU (Chinese Massive Multitask Language Understanding)",
       "description": "专注于中文知识评测，涵盖67个中文学科领域",
       "huggingface_url": "https://huggingface.co/datasets/haonan-li/cmmlu",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/cmmlu",
       "task_type": "choice",
@@ -40,6 +42,7 @@
       "name": "GSM8K (Grade School Math 8K)",
       "description": "小学数学应用题，需要多步推理",
       "huggingface_url": "https://huggingface.co/datasets/openai/gsm8k",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/gsm8k",
       "task_type": "math",
@@ -57,6 +60,7 @@
       "name": "HumanEval",
       "description": "代码生成任务，需要根据描述生成完整可运行的函数",
       "huggingface_url": "https://huggingface.co/datasets/openai/openai_humaneval",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/human_eval",
       "task_type": "code",
@@ -75,6 +79,7 @@
       "name": "CEval",
       "description": "中文评测集，包含多个领域的选择题",
       "huggingface_url": "https://huggingface.co/datasets/ceval/ceval-exam",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/ceval",
       "task_type": "choice",
@@ -88,30 +93,54 @@
       },
       "converter": "convert_ceval_to_xpert"
     },
-
-
-
-
-
-
     "mmbench": {
       "name": "MMBench",
       "description": "视觉-语言理解任务，需要模型理解图像内容并回答问题",
+      "huggingface_url": null,
+      "dataset_urls": {
+        "MMBench_DEV_EN_legacy": "http://opencompass.openxlab.space/utils/MMBench/MMBench_DEV_EN_legacy.tsv",
+        "MMBench_TEST_EN_legacy": "http://opencompass.openxlab.space/utils/MMBench/MMBench_TEST_EN_legacy.tsv",
+        "MMBench_DEV_CN_legacy": "http://opencompass.openxlab.space/utils/MMBench/MMBench_DEV_CN_legacy.tsv",
+        "MMBench_TEST_CN_legacy": "http://opencompass.openxlab.space/utils/MMBench/MMBench_TEST_CN_legacy.tsv",
+        "CCBench_legacy": "http://opencompass.openxlab.space/utils/MMBench/CCBench_legacy.tsv"
+      },
+      "modelscope_url": null,
+      "local_path": "data/integrated/mmbench",
+      "task_type": "vision",
+      "language": "en+cn",
+      "citation": "Liu et al., 2023",
+      "license": "Apache 2.0",
+      "size": "6,406",
+      "formats": {
+        "original": "tsv",
+        "xpert_format": "jsonl"
+      },
+      "converter": "convert_mmbench_to_xpert",
+      "media_files": true
+    },
+    "gmaimmbench": {
+      "name": "GMAI-MMBench",
+      "description": "专门针对医疗领域的多模态大模型（LVLMs）评估基准",
       "huggingface_url": "https://huggingface.co/datasets/OpenGVLab/GMAI-MMBench",
+      "dataset_urls": null,
       "modelscope_url": null,
       "local_path": "data/integrated/mmbench",
       "task_type": "vision",
       "language": "en",
-      "citation": "Liu et al., 2023",
-      "license": "CC BY-NC 4.0",
-      "size": "约2,500个样本",
+      "citation": "Chen et al., 2024",
+      "license": "Apache 2.0",
+      "size": "XXX",
       "formats": {
         "original": "json",
         "xpert_format": "jsonl"
       },
-      "converter": "mmbench_to_xpert",
+      "converter": "convert_gmaimmbench_to_xpert",
       "media_files": true
     },
+
+
+
+
     "llava_bench": {
       "name": "LLaVA-Bench",
       "description": "对话式视觉-语言任务，评测模型对图像的理解和描述能力",
