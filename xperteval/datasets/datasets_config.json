@@ -5,6 +5,7 @@
     "mmlu": {
       "name": "MMLU (Massive Multitask Language Understanding)",
       "description": "包含57个学科领域的多选题评测集，测试模型的知识广度",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/cais/mmlu",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -23,6 +24,7 @@
     "cmmlu": {
       "name": "CMMLU (Chinese Massive Multitask Language Understanding)",
       "description": "专注于中文知识评测，涵盖67个中文学科领域",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/haonan-li/cmmlu",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -41,6 +43,7 @@
     "gsm8k": {
       "name": "GSM8K (Grade School Math 8K)",
       "description": "小学数学应用题，需要多步推理",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/openai/gsm8k",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -59,6 +62,7 @@
     "human_eval": {
       "name": "HumanEval",
       "description": "代码生成任务，需要根据描述生成完整可运行的函数",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/openai/openai_humaneval",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -78,6 +82,7 @@
     "ceval": {
       "name": "CEval",
       "description": "中文评测集，包含多个领域的选择题",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/ceval/ceval-exam",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -96,6 +101,7 @@
     "mmbench": {
       "name": "MMBench",
       "description": "视觉-语言理解任务，需要模型理解图像内容并回答问题",
+      "github_url": null,
       "huggingface_url": null,
       "dataset_urls": {
         "MMBench_DEV_EN_legacy": "http://opencompass.openxlab.space/utils/MMBench/MMBench_DEV_EN_legacy.tsv",
@@ -121,6 +127,7 @@
     "gmaimmbench": {
       "name": "GMAI-MMBench",
       "description": "专门针对医疗领域的多模态大模型（LVLMs）评估基准",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/OpenGVLab/GMAI-MMBench",
       "dataset_urls": null,
       "modelscope_url": null,
@@ -144,6 +151,7 @@
     "llava_bench": {
       "name": "LLaVA-Bench",
       "description": "对话式视觉-语言任务，评测模型对图像的理解和描述能力",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/liuhaotian/llava-bench-in-the-wild",
       "modelscope_url": null,
       "local_path": "data/integrated/llava_bench",
@@ -162,6 +170,7 @@
     "seed_bench": {
       "name": "SEED-Bench",
       "description": "包含图像和视频理解任务，测试模型对视觉内容的多方面理解能力",
+      "github_url": "https://github.com/AILab-CVC/SEED-Bench",
       "huggingface_url": null,
       "modelscope_url": null,
       "local_path": "data/integrated/seed_bench",
@@ -180,6 +189,7 @@
     "mm_vet": {
       "name": "MM-Vet",
       "description": "专注于复杂的视觉推理任务，包括图表理解、视觉常识推理等",
+      "github_url": null,
       "huggingface_url": "https://huggingface.co/datasets/lmms-lab/MMVet",
       "modelscope_url": null,
       "local_path": "data/integrated/mm_vet",
