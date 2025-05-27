@@ -1,0 +1,190 @@
+{
+  "choice_samples": [
+    {
+      "prediction": "选择A",
+      "reference": {
+        "answer": {
+          "type": "choice",
+          "value": "A"
+        },
+        "choices": [
+          {"id": "A", "content": "选项A内容"},
+          {"id": "B", "content": "选项B内容"},
+          {"id": "C", "content": "选项C内容"},
+          {"id": "D", "content": "选项D内容"}
+        ]
+      }
+    },
+    {
+      "prediction": "我认为正确答案是B",
+      "reference": {
+        "answer": {
+          "type": "choice",
+          "value": "B"
+        },
+        "choices": [
+          {"id": "A", "content": "选项A内容"},
+          {"id": "B", "content": "选项B内容"},
+          {"id": "C", "content": "选项C内容"},
+          {"id": "D", "content": "选项D内容"}
+        ]
+      }
+    },
+    {
+      "prediction": "选项D是正确的",
+      "reference": {
+        "answer": {
+          "type": "choice",
+          "value": "C"
+        },
+        "choices": [
+          {"id": "A", "content": "选项A内容"},
+          {"id": "B", "content": "选项B内容"},
+          {"id": "C", "content": "选项C内容"},
+          {"id": "D", "content": "选项D内容"}
+        ]
+      }
+    }
+  ],
+  
+  "text_samples": [
+    {
+      "prediction": "北京是中国的首都",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "北京是中国的首都"
+        }
+      }
+    },
+    {
+      "prediction": "中国的首都是北京",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "北京是中国的首都"
+        }
+      }
+    },
+    {
+      "prediction": "上海是中国的经济中心",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "北京是中国的首都"
+        }
+      }
+    }
+  ],
+  
+  "number_samples": [
+    {
+      "prediction": "计算结果是42",
+      "reference": {
+        "answer": {
+          "type": "number",
+          "value": "42"
+        }
+      }
+    },
+    {
+      "prediction": "答案约等于3.14159",
+      "reference": {
+        "answer": {
+          "type": "number",
+          "value": "3.14"
+        }
+      }
+    },
+    {
+      "prediction": "结果是负数：-10.5",
+      "reference": {
+        "answer": {
+          "type": "number",
+          "value": "-10.5"
+        }
+      }
+    },
+    {
+      "prediction": "计算得出1/2",
+      "reference": {
+        "answer": {
+          "type": "number",
+          "value": "0.5"
+        }
+      }
+    }
+  ],
+  
+  "bleu_samples": [
+    {
+      "prediction": "今天天气真好，阳光明媚。",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "今天的天气非常好，阳光很足。"
+        }
+      }
+    },
+    {
+      "prediction": "The quick brown fox jumps over the lazy dog.",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "The fast brown fox jumped over a lazy dog."
+        }
+      }
+    }
+  ],
+  
+  "tcm_samples": [
+    {
+      "prediction": "患者表现为气虚血瘀证，建议补气活血。",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "气虚血瘀证"
+        },
+        "meta": {
+          "tcm_eval_type": "syndrome"
+        }
+      }
+    },
+    {
+      "prediction": "诊断为肝郁脾虚证。",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "肝郁气滞证"
+        },
+        "meta": {
+          "tcm_eval_type": "syndrome"
+        }
+      }
+    },
+    {
+      "prediction": "此病属于慢性胃炎，中医辨证为脾胃虚弱。",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "慢性胃炎"
+        },
+        "meta": {
+          "tcm_eval_type": "disease"
+        }
+      }
+    },
+    {
+      "prediction": "治法应以补气养阴，活血化瘀为主。",
+      "reference": {
+        "answer": {
+          "type": "text",
+          "value": "补气养阴，活血化瘀"
+        },
+        "meta": {
+          "tcm_eval_type": "treatment"
+        }
+      }
+    }
+  ]
+} 

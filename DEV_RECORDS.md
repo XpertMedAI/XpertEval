@@ -250,19 +250,27 @@
         - `[已完成 - 2025-05-19 14:02]` 创建 `docs/index.md`，作为文档首页
         - `[已完成 - 2025-05-19 14:02]` 创建 `.github/workflows/docs_deploy.yml`，配置自动部署
 
-#### **任务2.2：评测器基类与初步实现 (`xperteval/core/base_evaluator.py`, `xperteval/evaluators/`)** `[待执行]`
+#### **任务2.2：评测器基类与初步实现 (`xperteval/core/base_evaluator.py`, `xperteval/evaluators/`)** `[已完成 - 2025-05-27 14:35]`
 - **涉及文件**：`xperteval/core/base_evaluator.py`, `xperteval/evaluators/__init__.py`, `xperteval/evaluators/common/__init__.py`, `xperteval/evaluators/common/accuracy.py` (示例)
 - **`xperteval/core/base_evaluator.py` 功能点**：
-    - `[待执行]` 定义抽象基类 `BaseEvaluator` (可使用 `abc.ABC`)。
-    - `[待执行]` 定义抽象方法 `evaluate(self, predictions: list, references: list) -> dict`。
+    - `[已完成 - 2025-05-27 14:35]` 定义抽象基类 `BaseEvaluator` (可使用 `abc.ABC`)。
+    - `[已完成 - 2025-05-27 14:35]` 定义抽象方法 `evaluate(self, predictions: list, references: list) -> dict`。
         - `predictions`: 模型生成的结果列表。
         - `references`: 数据集中的标准答案/参考列表。
         - 返回一个包含评测指标名称和分数的字典，例如 `{"accuracy": 0.85}`。
 - **`xperteval/evaluators/common/accuracy.py` 功能点** (示例):
-    - `[待执行]` 定义 `AccuracyEvaluator` 类，继承自 `BaseEvaluator`。
-    - `[待执行]` 实现 `evaluate` 方法，计算简单分类任务的准确率 (精确匹配)。
+    - `[已完成 - 2025-05-27 14:35]` 定义 `AccuracyEvaluator` 类，继承自 `BaseEvaluator`。
+    - `[已完成 - 2025-05-27 14:35]` 实现 `evaluate` 方法，计算简单分类任务的准确率 (精确匹配)。
 - **`xperteval/evaluators/__init__.py` 和 `xperteval/evaluators/common/__init__.py` 功能点**：
-    - `[待执行]` 确保评测器类可被导入。
+    - `[已完成 - 2025-05-27 14:35]` 确保评测器类可被导入。
+- **其他实现的评测器**：
+    - `[已完成 - 2025-05-27 14:35]` 实现 `BLEUEvaluator` 用于文本生成任务评估。
+    - `[已完成 - 2025-05-27 14:35]` 实现 `MathEvaluator` 用于数学问题评估。
+    - `[已完成 - 2025-05-27 14:35]` 实现 `TcmDiagnosisEvaluator` 用于中医诊断评估。
+- **评测器注册机制**：
+    - `[已完成 - 2025-05-27 14:35]` 实现评测器注册表 `EVALUATOR_REGISTRY`。
+    - `[已完成 - 2025-05-27 14:35]` 实现 `get_evaluator` 和 `get_evaluators` 函数。
+    - `[已完成 - 2025-05-27 14:35]` 实现 `list_evaluators` 和 `register_evaluator` 函数。
 
 #### **任务2.3：自动化评测引擎 (`xperteval/core/auto_eval_engine.py`)** `[待执行]`
 - **涉及文件**：`xperteval/core/auto_eval_engine.py`
