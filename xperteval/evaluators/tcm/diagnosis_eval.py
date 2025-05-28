@@ -6,14 +6,14 @@
 
 import re
 import difflib
-from typing import Dict, List, Any, Optional, Union, Set
-import logging
 
-from ...core.base_evaluator import BaseEvaluator
+from typing import Dict, List, Any, Optional, Union, Set
 from ...utils import get_logger
+from ...core.base_evaluator import BaseEvaluator
 
 # 配置日志
 logger = get_logger(__name__)
+
 
 class TcmDiagnosisEvaluator(BaseEvaluator):
     """

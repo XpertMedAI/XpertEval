@@ -4,8 +4,14 @@
 
 定义评测器的抽象基类和通用接口，所有具体评测指标都应该继承此基类。
 """
+
 import abc
-from typing import Dict, List, Any, Optional, Union
+
+from ..utils import get_logger
+from typing import Dict, List, Any, Optional, Union, Tuple
+
+# 配置日志
+logger = get_logger(__name__)
 
 
 class BaseEvaluator(abc.ABC):
@@ -38,6 +44,28 @@ class BaseEvaluator(abc.ABC):
             包含评测指标名称和分数的字典，例如 {"accuracy": 0.85}
         """
         pass
+
+    def _pre_evaluate(self, predictions: List[str], references: List[Dict[str, Any]]) -> Tuple[List[str], List[Dict[str, Any]]]:
+        """
+        预处理预测和参考答案
+
+        Args:
+            predictions: 模型生成的预测结果列表
+            references: 数据集中的标准答案/参考列表，每个参考是一个字典，包含答案类型、值等信息
+
+        Returns:
+            处理后的预测和参考答案列表
+        """
+        # 判断预测和参考答案数量是否一致
+        if len(predictions) != len(references):
+            logger.warning(f"预测数量({len(predictions)})与参考答案数量({len(references)})不匹配")
+            # 取最小长度
+            length = min(len(predictions), len(references))
+            predictions = predictions[:length]
+            references = references[:length]
+
+        # 返回处理后的预测和参考答案
+        return predictions, references
     
     def _is_valid_sample(self, prediction: str, reference: Dict[str, Any]) -> bool:
         """

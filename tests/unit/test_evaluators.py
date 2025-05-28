@@ -4,11 +4,11 @@
 评测器模块的单元测试
 """
 
-import unittest
-import json
 import os
-from typing import Dict, List, Any
+import json
+import unittest
 
+from typing import Dict, List, Any
 from xperteval.core.base_evaluator import BaseEvaluator
 from xperteval.evaluators import (
     get_evaluator, get_evaluators, list_evaluators, register_evaluator,

@@ -5,14 +5,14 @@
 """
 
 import re
-from typing import Dict, List, Any, Optional, Union
-import logging
 
-from ...core.base_evaluator import BaseEvaluator
+from typing import Dict, List, Any, Optional, Union
 from ...utils import get_logger
+from ...core.base_evaluator import BaseEvaluator
 
 # 配置日志
 logger = get_logger(__name__)
+
 
 class AccuracyEvaluator(BaseEvaluator):
     """
@@ -53,18 +53,16 @@ class AccuracyEvaluator(BaseEvaluator):
         Returns:
             包含准确率评分的字典
         """
-        if len(predictions) != len(references):
-            logger.warning(f"预测数量({len(predictions)})与参考答案数量({len(references)})不匹配")
-            # 取最小长度
-            length = min(len(predictions), len(references))
-            predictions = predictions[:length]
-            references = references[:length]
+        # 预处理预测和参考答案
+        predictions, references = self._pre_evaluate(predictions, references)
         
+        # 汇总分数
         individual_scores = []
         choice_scores = []
         text_scores = []
         number_scores = []
         
+        # 遍历预测和参考答案
         for i, (pred, ref) in enumerate(zip(predictions, references)):
             # 检查样本有效性
             if not self._is_valid_sample(pred, ref):

@@ -18,6 +18,7 @@ toc: true
 
 - [配置指南](./user_manual/configuration.html)：详细说明如何配置模型 API 和评测参数
 - [WebUI 使用说明](./user_manual/web_ui.html)：介绍 Gradio WebUI 的使用方法
+- [评测器详解](./user_manual/evaluators.html)：详细介绍各种评测指标的实现原理和使用方法
 
 ## 快速参考
 
@@ -58,7 +59,7 @@ python app.py --host 0.0.0.0
 
 ### 如何自定义评测指标？
 
-请参考[开发者指南](../developer_guide/extending.html)中的"添加自定义评测指标"部分。
+请参考[开发者指南](../developer_guide/extending.html)中的"添加自定义评测指标"部分，或查看[评测器详解](./user_manual/evaluators.html)中的相关示例。
 
 ### 如何解决 API 连接问题？
 
