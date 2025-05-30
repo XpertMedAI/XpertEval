@@ -6,8 +6,12 @@
 """
 
 from .api_caller import invoke_model_api, ApiError
+from .base_evaluator import BaseEvaluator
+from .auto_eval_engine import AutoEvalEngine
 
 __all__ = [
     'invoke_model_api',
-    'ApiError'
+    'ApiError',
+    'BaseEvaluator',
+    'AutoEvalEngine'
 ] 
